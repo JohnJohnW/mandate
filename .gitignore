@@ -36,3 +36,9 @@ submission/svg/
 .DS_Store
 .vscode/
 .idea/
+
+# local Anvil artefacts (chain id 31337 is recreated on every restart)
+packages/contracts/deployments/31337.json
+packages/contracts/broadcast/*/31337/
+packages/contracts/evidence/31337-*.json
+packages/contracts/evidence/latest-31337.json
