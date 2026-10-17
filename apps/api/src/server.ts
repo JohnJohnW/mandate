@@ -406,6 +406,40 @@ export function createServer(app: App): Hono {
     reply(c, { signer: app.auth.authenticate(c.req.header("x-owner-session")) ?? null }),
   );
 
+  // ---- identity and payments
+  h.get("/identity", async (c) => {
+    const ours = await app.identity.ourCard();
+    const oracleId = app.identity.record?.oracle?.agentId;
+    const oracle = await app.identity.card(oracleId);
+    let kya: { ok: boolean; detail: string } | undefined;
+    let card: unknown;
+    try {
+      const res = await fetch(`${app.cfg.oracleUrl}/.well-known/agent.json`, {
+        signal: AbortSignal.timeout(3000),
+      });
+      card = res.ok ? await res.json() : undefined;
+      const payTo = (card as { payTo?: string } | undefined)?.payTo;
+      if (payTo)
+        kya = await app.identity.knowYourAgent(
+          `${app.cfg.oracleUrl}/prices`,
+          payTo as `0x${string}`,
+        );
+    } catch {
+      kya = { ok: false, detail: "oracle not reachable" };
+    }
+    return reply(c, {
+      ours,
+      oracle: { ...oracle, card, kya },
+      registry: app.identity.registry ?? null,
+      explorer: app.cfg.explorerUrl || null,
+    });
+  });
+  h.get("/.well-known/agent.json", async (c) => reply(c, await app.identity.registrationFile()));
+  h.get("/x402/history", (c) => reply(c, app.x402.list()));
+  h.get("/x402/float", async (c) =>
+    reply(c, { balance: await app.x402.floatBalance(), limits: app.x402.limits }),
+  );
+
   // ---- events (SSE)
   h.get("/events", (c) =>
     streamSSE(c, async (stream) => {
@@ -559,6 +593,14 @@ function openApi() {
       "/auth/passkey/assert/verify": {
         post: { summary: "Finish assertion; returns an owner session" },
       },
+      "/identity": {
+        get: { summary: "Our ERC-8004 card, the oracle's card and the Know Your Agent check" },
+      },
+      "/.well-known/agent.json": { get: { summary: "ERC-8004 registration file for our agent" } },
+      "/x402/history": {
+        get: { summary: "x402 payments made from petty cash, with policy reasons" },
+      },
+      "/x402/float": { get: { summary: "Petty cash float balance and limits" } },
       "/events": {
         get: {
           summary:

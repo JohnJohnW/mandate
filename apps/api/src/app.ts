@@ -20,6 +20,8 @@ import { MockPlanner } from "./planner/mock.js";
 import type { Planner } from "./planner/types.js";
 import { Quarantine } from "./quarantine.js";
 import { ScreeningProvider } from "./screening.js";
+import { Identity } from "./identity.js";
+import { X402Payer } from "./x402.js";
 
 export interface App {
   cfg: Config;
@@ -35,6 +37,8 @@ export interface App {
   intents: IntentService;
   agent: Agent;
   auth: OwnerAuth;
+  identity: Identity;
+  x402: X402Payer;
   tokens: TokenMeta[];
   startupChecks: { name: string; ok: boolean; detail: string }[];
   close(): void;
@@ -101,7 +105,54 @@ export async function createApp(cfg: Config, opts: AppOptions = {}): Promise<App
   );
   const planner =
     opts.planner ?? (cfg.planner === "live" ? new LivePlanner(cfg) : new MockPlanner());
-  const agent = new Agent(cfg, clients, db, bus, mandate, intents, quarantine, screening, planner);
+  const identity = new Identity(cfg, clients);
+  const x402 = new X402Payer(cfg, clients, db, bus, intents, screening, identity);
+  const agent = new Agent(cfg, clients, db, bus, mandate, intents, quarantine, screening, planner, {
+    prices: async () => {
+      const r = await x402.pay(`${cfg.oracleUrl}/prices`);
+      const flags = r.record.reasons
+        .filter((x) => x.severity !== "info")
+        .map((x) => `${x.rule}: ${x.message}`)
+        .join("; ");
+      if (r.record.status !== "paid")
+        return {
+          ok: false,
+          detail: `Price request ${r.record.status}: ${flags || "no reason recorded"}`,
+          data: r.record,
+        };
+      const prices =
+        (r.body as { prices?: Record<string, { usd: number; source: string }> } | undefined)
+          ?.prices ?? {};
+      const lines = Object.entries(prices).map(([k, v]) => `${k}: ${v.usd} USD (${v.source})`);
+      const kya =
+        r.record.reasons.find((x) => x.rule === "know_your_agent")?.message ?? "payee checked";
+      return {
+        ok: true,
+        detail:
+          `Paid ${r.record.amountFormatted} to the oracle agent (${kya})${r.record.txHash ? `, settled in ${r.record.txHash}` : ""}.` +
+          "\n" +
+          lines.join("\n"),
+        data: { record: r.record, body: r.body },
+      };
+    },
+    identity: async () => {
+      const c = await identity.ourCard();
+      return {
+        ok: c.onChain,
+        detail: c.onChain
+          ? `ERC-8004 agent #${c.agentId} in registry ${c.registry}; owner ${c.owner}; wallet ${c.wallet}${c.vaultBound ? " (the vault, bound with the owner's signature)" : " (not yet bound to the vault)"}; card ${c.agentURI}`
+          : c.detail,
+        data: c,
+      };
+    },
+    counterparty: async (address, url) => {
+      const r = await identity.knowYourAgent(
+        url ?? `${cfg.oracleUrl}/prices`,
+        address as `0x${string}`,
+      );
+      return { ok: r.ok, detail: r.detail, data: r };
+    },
+  });
   const auth = new OwnerAuth(cfg, db);
 
   const startupChecks = opts.skipChecks ? [] : await runStartupChecks(cfg, clients, screening);
@@ -139,6 +190,8 @@ export async function createApp(cfg: Config, opts: AppOptions = {}): Promise<App
     intents,
     agent,
     auth,
+    identity,
+    x402,
     tokens,
     startupChecks,
     close: () => db.close(),

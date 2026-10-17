@@ -39,6 +39,10 @@ export interface ToolContext {
   quarantined: string[];
   prices?: () => Promise<{ ok: boolean; detail: string; data?: unknown }>;
   identity?: () => Promise<{ ok: boolean; detail: string; data?: unknown }>;
+  counterparty?: (
+    address: string,
+    url?: string,
+  ) => Promise<{ ok: boolean; detail: string; data?: unknown }>;
 }
 
 export interface ToolResult {
@@ -348,9 +352,12 @@ export const TOOLS: Tool[] = [
       "Look up a counterparty agent's ERC-8004 identity and reputation before paying it.",
     tier: 0,
     sideEffects: false,
-    args: '{"address": string}',
-    async run() {
-      return { ok: false, text: "Counterparty identity lookups arrive with the identity phase." };
+    args: '{"address": string, "url"?: string}',
+    async run(args, ctx) {
+      if (!ctx.counterparty)
+        return { ok: false, text: "Counterparty identity lookups are not configured." };
+      const r = await ctx.counterparty(str(args.address) ?? "", str(args.url));
+      return { ok: r.ok, text: r.detail, data: r.data };
     },
   },
   {

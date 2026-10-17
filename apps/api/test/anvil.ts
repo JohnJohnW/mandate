@@ -78,7 +78,7 @@ export async function deployFixture(): Promise<Fixture> {
     const r = await publicClient.waitForTransactionReceipt({ hash });
     return r.contractAddress!;
   };
-  const usdc = await deploy("MockERC20", ["Mock USD Coin", "USDC", 6]);
+  const usdc = await deploy("MockUSDC", []);
   const weth = await deploy("MockWETH", []);
   const vault = await deploy("MandateVault", [owner.address]);
   const write = async (functionName: string, args: unknown[]) => {
@@ -117,7 +117,7 @@ export async function deployFixture(): Promise<Fixture> {
   await publicClient.waitForTransactionReceipt({ hash: fund });
   const mint = await ownerClient.writeContract({
     address: usdc,
-    abi: artifact("MockERC20").abi as never,
+    abi: artifact("MockUSDC").abi as never,
     functionName: "mint",
     args: [vault, 100_000_000n],
   });

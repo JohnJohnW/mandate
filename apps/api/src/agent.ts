@@ -35,7 +35,7 @@ export class Agent {
     private readonly quarantine: Quarantine,
     private readonly screening: ScreeningProvider,
     public planner: Planner,
-    private readonly extras: Pick<ToolContext, "prices" | "identity"> = {},
+    private readonly extras: Pick<ToolContext, "prices" | "identity" | "counterparty"> = {},
   ) {}
 
   async plannerInput(ownerMessage: string, quarantineIds: string[]): Promise<PlannerInput> {
