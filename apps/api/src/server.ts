@@ -208,7 +208,7 @@ export function createServer(app: App): Hono {
     // For MetaMask mode: what the owner will sign.
     const a = app.db.getApproval(c.req.param("id"));
     if (!a) throw new HttpError(404, "not found");
-    const row = app.db.getIntent(a.intent_id)!;
+    const { intentHash: ih } = await app.intents.refreshNonce(a.intent_id);
     const block = await app.clients.publicClient.getBlock();
     const deadline = block.timestamp + 900n;
     return reply(c, {
@@ -225,7 +225,7 @@ export function createServer(app: App): Hono {
           { name: "deadline", type: "uint256" },
         ],
       },
-      message: { intentHash: row.intent_hash, deadline: deadline.toString() },
+      message: { intentHash: ih, deadline: deadline.toString() },
     });
   });
 

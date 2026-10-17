@@ -400,6 +400,38 @@ export class IntentService {
 
   // ------------------------------------------------------------------ approvals
 
+  /**
+   * An intent that waited for approval may have lost its nonce to a later Tier 1
+   * intent. Before the owner signs, the intent is rebuilt with the current nonce
+   * and re-signed by the agent, so the owner's approval binds the hash the vault
+   * will actually see.
+   */
+  async refreshNonce(
+    intentId: string,
+  ): Promise<{ intent: Intent; intentHash: Hex; changed: boolean }> {
+    const row = this.db.getIntent(intentId)!;
+    const m = await this.mandate.read();
+    const intent = rowToIntent(row);
+    if (intent.nonce === m.nextNonce)
+      return { intent, intentHash: row.intent_hash as Hex, changed: false };
+    const block = await this.clients.publicClient.getBlock();
+    const fresh: Intent = { ...intent, nonce: m.nextNonce, deadline: block.timestamp + 1800n };
+    const ih = intentHash(fresh, this.cfg.chainId, m.vault);
+    const agentSig = await this.executor.signIntent(fresh);
+    this.db.updateIntent(intentId, {
+      nonce: fresh.nonce.toString(),
+      deadline: fresh.deadline.toString(),
+      intent_hash: ih,
+      agent_sig: agentSig,
+    });
+    this.record(intentId, "intent.renonced", {
+      from: intent.nonce,
+      to: fresh.nonce,
+      intentHash: ih,
+    });
+    return { intent: fresh, intentHash: ih, changed: true };
+  }
+
   /** Local owner mode: the server-held owner key signs after the owner authenticated (passkey). */
   async approveLocal(approvalId: string, signer: string): Promise<IntentView> {
     const a = this.db.getApproval(approvalId);
@@ -411,7 +443,7 @@ export class IntentService {
       throw new Error("approval expired");
     }
     if (!this.clients.ownerClient) throw new Error("local owner key not configured");
-    const row = this.db.getIntent(a.intent_id)!;
+    const { intentHash: ih } = await this.refreshNonce(a.intent_id);
     const m = await this.mandate.read();
     const block = await this.clients.publicClient.getBlock();
     const deadline = block.timestamp + 900n;
@@ -419,7 +451,7 @@ export class IntentService {
       this.clients.ownerClient,
       this.cfg.chainId,
       m.vault,
-      row.intent_hash as Hex,
+      ih,
       deadline,
     );
     return this.approveWithSignature(approvalId, ownerSig, deadline, signer);
@@ -509,31 +541,25 @@ export class IntentService {
     const m = await this.mandate.read();
     const block = await this.clients.publicClient.getBlock();
     const now = block.timestamp;
-    const contacts = this.db
-      .listContacts()
-      .map((c) => ({
-        name: c.name,
-        address: getAddress(c.address),
-        addedAt: BigInt(Math.floor(Date.parse(c.added_at) / 1000)),
-        source: "owner" as const,
-      }));
-    const spendHistory = this.db
-      .listSpend()
-      .map((s) => ({
-        ts: BigInt(Math.floor(Date.parse(s.ts) / 1000)),
-        token: getAddress(s.token),
-        amount: BigInt(s.amount),
-        target: getAddress(s.target),
-        tier: s.tier as 0 | 1 | 2 | 3,
-      }));
-    const inboundHistory = this.db
-      .listInbound()
-      .map((i) => ({
-        ts: BigInt(Math.floor(Date.parse(i.ts) / 1000)),
-        from: getAddress(i.from_addr),
-        token: getAddress(i.token),
-        amount: BigInt(i.amount),
-      }));
+    const contacts = this.db.listContacts().map((c) => ({
+      name: c.name,
+      address: getAddress(c.address),
+      addedAt: BigInt(Math.floor(Date.parse(c.added_at) / 1000)),
+      source: "owner" as const,
+    }));
+    const spendHistory = this.db.listSpend().map((s) => ({
+      ts: BigInt(Math.floor(Date.parse(s.ts) / 1000)),
+      token: getAddress(s.token),
+      amount: BigInt(s.amount),
+      target: getAddress(s.target),
+      tier: s.tier as 0 | 1 | 2 | 3,
+    }));
+    const inboundHistory = this.db.listInbound().map((i) => ({
+      ts: BigInt(Math.floor(Date.parse(i.ts) / 1000)),
+      from: getAddress(i.from_addr),
+      token: getAddress(i.token),
+      amount: BigInt(i.amount),
+    }));
     const screening = this.screening.screen([intent.target], now);
     const ctx: PolicyContext = {
       now,
