@@ -1,0 +1,42 @@
+{
+  "name": "mandate",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A policy-bound autonomous on-chain wallet agent. The agent holds a mandate, not a key.",
+  "author": "John Wynter",
+  "contributors": [
+    "John Wynter"
+  ],
+  "license": "MIT",
+  "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter ./apps/* dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "keys:generate": "tsx scripts/gen-keys.ts",
+    "contracts:test": "pnpm --filter @mandate/contracts test",
+    "contracts:deploy": "pnpm --filter @mandate/contracts deploy",
+    "evidence:run": "pnpm --filter @mandate/contracts evidence",
+    "attacks:run": "pnpm --filter @mandate/attacks run:all",
+    "submission:build": "tsx scripts/build-submission.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.5",
+    "dotenv": "^18.0.8",
+    "eslint": "^10.13.0",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.2",
+    "viem": "^2.57.7",
+    "vitest": "^5.0.5"
+  }
+}

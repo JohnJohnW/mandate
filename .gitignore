@@ -1,0 +1,37 @@
+# env and secrets
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# dependencies and build output
+node_modules/
+dist/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# foundry
+packages/contracts/cache/
+packages/contracts/out/
+packages/contracts/broadcast/**/dry-run/
+packages/contracts/lib/
+
+# runtime data
+data/
+*.db
+*.db-journal
+*.sqlite
+
+# submission build artefacts (regenerated)
+submission/*.pdf
+submission/*.pptx
+submission/*.zip
+submission/svg/
+
+# os and editors
+.DS_Store
+.vscode/
+.idea/
