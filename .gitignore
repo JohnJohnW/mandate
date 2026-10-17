@@ -42,3 +42,7 @@ packages/contracts/deployments/31337.json
 packages/contracts/broadcast/*/31337/
 packages/contracts/evidence/31337-*.json
 packages/contracts/evidence/latest-31337.json
+
+# next.js
+apps/web/.next/
+apps/web/next-env.d.ts
