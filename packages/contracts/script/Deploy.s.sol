@@ -4,6 +4,8 @@ pragma solidity 0.8.28;
 import {Script, console} from "forge-std/Script.sol";
 import {MandateVault} from "../src/MandateVault.sol";
 import {MockERC20} from "../src/MockERC20.sol";
+import {MockUSDC} from "../src/MockUSDC.sol";
+import {MockIdentityRegistry} from "../src/MockIdentityRegistry.sol";
 import {MockWETH} from "../src/MockWETH.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -34,10 +36,15 @@ contract Deploy is Script {
 
         vm.startBroadcast(ownerPk);
 
+        address registry = vm.envOr("ERC8004_IDENTITY_REGISTRY", address(0));
         if (usdc == address(0)) {
-            usdc = address(new MockERC20("Mock USD Coin", "USDC", 6));
-            MockERC20(usdc).mint(owner, 1_000_000_000_000);
-            console.log("MockERC20 (USDC) deployed:", usdc);
+            usdc = address(new MockUSDC());
+            MockUSDC(usdc).mint(owner, 1_000_000_000_000);
+            console.log("MockUSDC (EIP-3009) deployed:", usdc);
+        }
+        if (registry == address(0)) {
+            registry = address(new MockIdentityRegistry());
+            console.log("MockIdentityRegistry deployed:", registry);
         }
         if (weth == address(0)) {
             weth = address(new MockWETH());
@@ -73,6 +80,7 @@ contract Deploy is Script {
         vm.serializeAddress(json, "usdc", usdc);
         vm.serializeAddress(json, "weth", weth);
         vm.serializeAddress(json, "contact", contact);
+        vm.serializeAddress(json, "identityRegistry", registry);
         vm.serializeUint(json, "deployedAt", block.timestamp);
         string memory out = vm.serializeUint(json, "deployBlock", block.number);
         string memory path = string.concat("deployments/", vm.toString(block.chainid), ".json");

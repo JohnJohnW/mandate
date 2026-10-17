@@ -6,10 +6,15 @@
 import mandateVaultAbi from "./abi/MandateVault.json" with { type: "json" };
 import mockErc20Abi from "./abi/MockERC20.json" with { type: "json" };
 import mockWethAbi from "./abi/MockWETH.json" with { type: "json" };
+import mockUsdcAbi from "./abi/MockUSDC.json" with { type: "json" };
+import identityRegistryAbi from "./abi/MockIdentityRegistry.json" with { type: "json" };
 
 export const MANDATE_VAULT_ABI = mandateVaultAbi;
 export const MOCK_ERC20_ABI = mockErc20Abi;
 export const MOCK_WETH_ABI = mockWethAbi;
+export const MOCK_USDC_ABI = mockUsdcAbi;
+/** The subset of the ERC-8004 Identity Registry we call; identical on the mock and the live registry. */
+export const IDENTITY_REGISTRY_ABI = identityRegistryAbi;
 
 export interface Deployment {
   chainId: number;
@@ -19,6 +24,7 @@ export interface Deployment {
   usdc: `0x${string}`;
   weth: `0x${string}`;
   contact: `0x${string}`;
+  identityRegistry: `0x${string}`;
   deployedAt: number;
   deployBlock: number;
 }

@@ -9,6 +9,7 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC1271} from "@openzeppelin/contracts/interfaces/IERC1271.sol";
 import {MandateMath} from "./MandateMath.sol";
 
 /// @title MandateVault
@@ -21,7 +22,7 @@ import {MandateMath} from "./MandateMath.sol";
 /// @dev Unaudited. Testnet only. Design notes live in docs/ARCHITECTURE.md and
 ///      the ADRs under docs/adr. The agent is an externally owned account that
 ///      signs each intent and submits it; `msg.sender` must equal the signer.
-contract MandateVault is Ownable2Step, EIP712, ReentrancyGuard, Pausable {
+contract MandateVault is Ownable2Step, EIP712, ReentrancyGuard, Pausable, IERC1271 {
     using SafeERC20 for IERC20;
 
     // ---------------------------------------------------------------------
@@ -445,6 +446,22 @@ contract MandateVault is Ownable2Step, EIP712, ReentrancyGuard, Pausable {
 
     function approvalHash(bytes32 ih, uint256 deadline) public view returns (bytes32) {
         return _hashTypedDataV4(keccak256(abi.encode(APPROVAL_TYPEHASH, ih, deadline)));
+    }
+
+    /// @notice ERC-1271: a signature over `hash` is valid for this vault when it was made by the
+    ///         owner. This lets registries such as ERC-8004 bind the vault as the agent's wallet
+    ///         with the owner's consent, while the agent key can never speak for the vault. [ERC-1271]
+    function isValidSignature(bytes32 hash, bytes calldata signature)
+        external
+        view
+        override
+        returns (bytes4)
+    {
+        (address recovered, ECDSA.RecoverError err,) = ECDSA.tryRecover(hash, signature);
+        if (err == ECDSA.RecoverError.NoError && recovered == owner()) {
+            return IERC1271.isValidSignature.selector;
+        }
+        return bytes4(0);
     }
 
     function domainSeparator() external view returns (bytes32) {

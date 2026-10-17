@@ -16,10 +16,14 @@
     "setup": "sh ./setup.sh",
     "abi": "sh ./script/export-abi.sh",
     "deploy:anvil": "tsx script/deploy.ts --anvil",
-    "evidence:anvil": "tsx script/evidence.ts --anvil"
+    "evidence:anvil": "tsx script/evidence.ts --anvil",
+    "identity": "tsx script/register-identity.ts",
+    "identity:anvil": "tsx script/register-identity.ts --anvil"
   },
   "dependencies": {
     "@mandate/core": "workspace:*",
+    "@x402/evm": "2.28.0",
+    "@x402/fetch": "2.28.0",
     "viem": "^2.57.7"
   },
   "main": "./ts/index.ts",

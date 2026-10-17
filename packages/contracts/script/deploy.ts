@@ -24,6 +24,7 @@ const scriptEnv: NodeJS.ProcessEnv = {
 if (!anvil) {
   scriptEnv.USDC_ADDRESS = c.env.get("USDC_ADDRESS");
   scriptEnv.WETH_ADDRESS = c.env.get("WETH_ADDRESS");
+  scriptEnv.ERC8004_IDENTITY_REGISTRY = c.env.get("ERC8004_IDENTITY_REGISTRY");
 } else {
   scriptEnv.VAULT_FUNDING_WEI = String(10n ** 18n);
 }
@@ -44,6 +45,7 @@ if (anvil) {
   c.env.set("ANVIL_VAULT_ADDRESS", dep.vault!);
   c.env.set("ANVIL_USDC_ADDRESS", dep.usdc!);
   c.env.set("ANVIL_WETH_ADDRESS", dep.weth!);
+  c.env.set("ANVIL_ERC8004_IDENTITY_REGISTRY", dep.identityRegistry!);
 } else {
   c.env.set("VAULT_ADDRESS", dep.vault!);
 }
