@@ -1,0 +1,18 @@
+{
+  "name": "@mandate/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MandateVault: on-chain enforcement of the agent mandate",
+  "author": "John Wynter",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "forge test -vv",
+    "coverage": "forge coverage",
+    "build": "forge build",
+    "deploy": "tsx script/deploy.ts",
+    "evidence": "tsx script/evidence.ts",
+    "typecheck": "echo 'no typescript yet'",
+    "setup": "sh ./setup.sh"
+  }
+}
