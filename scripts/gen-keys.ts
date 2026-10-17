@@ -29,10 +29,12 @@ function setKey(name: string): string {
 
 const owner = setKey("OWNER_PRIVATE_KEY");
 const agent = setKey("AGENT_PRIVATE_KEY");
+const oracle = setKey("ORACLE_PRIVATE_KEY");
 writeFileSync(envPath, env, { mode: 0o600 });
 
 console.log("");
 console.log("Fund these on Base Sepolia (testnet only):");
 console.log(`  owner  ${owner}   needs ETH (deploys the vault, sets the mandate, funds the vault)`);
-console.log(`  agent  ${agent}   needs a little ETH for gas and some USDC for x402 petty cash`);
+console.log(`  agent  ${agent}   needs a little ETH for gas (petty cash USDC comes from the vault)`);
+console.log(`  oracle ${oracle}   needs a little ETH for gas (registers its identity, receives x402 payments)`);
 console.log("Faucets: Coinbase Developer Platform (ETH and USDC), Alchemy, QuickNode, thirdweb.");
