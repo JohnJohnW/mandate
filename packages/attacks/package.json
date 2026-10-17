@@ -7,7 +7,19 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "vitest run --passWithNoTests",
-    "typecheck": "tsc --noEmit"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "run:all": "pnpm --filter @mandate/api attacks"
+  },
+  "dependencies": {
+    "@mandate/core": "workspace:*",
+    "viem": "^2.57.7",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
   }
 }
