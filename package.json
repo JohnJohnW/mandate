@@ -25,7 +25,11 @@
     "contracts:deploy": "pnpm --filter @mandate/contracts deploy",
     "evidence:run": "pnpm --filter @mandate/contracts evidence",
     "attacks:run": "pnpm --filter @mandate/attacks run:all",
-    "submission:build": "tsx scripts/build-submission.ts"
+    "submission:build": "tsx scripts/build-submission.ts",
+    "dev:api:anvil": "pnpm --filter @mandate/api dev:anvil",
+    "dev:web": "pnpm --filter @mandate/web dev",
+    "contracts:deploy:anvil": "pnpm --filter @mandate/contracts deploy:anvil",
+    "evidence:anvil": "pnpm --filter @mandate/contracts evidence:anvil"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
