@@ -47,7 +47,14 @@ importers:
 
   packages/attacks: {}
 
-  packages/contracts: {}
+  packages/contracts:
+    dependencies:
+      '@mandate/core':
+        specifier: workspace:*
+        version: link:../core
+      viem:
+        specifier: ^2.57.7
+        version: 2.57.7(typescript@5.9.3)(zod@4.6.7)
 
   packages/core:
     dependencies:

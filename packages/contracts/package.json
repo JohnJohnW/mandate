@@ -12,7 +12,19 @@
     "build": "forge build",
     "deploy": "tsx script/deploy.ts",
     "evidence": "tsx script/evidence.ts",
-    "typecheck": "echo 'no typescript yet'",
-    "setup": "sh ./setup.sh"
+    "typecheck": "tsc --noEmit",
+    "setup": "sh ./setup.sh",
+    "abi": "sh ./script/export-abi.sh",
+    "deploy:anvil": "tsx script/deploy.ts --anvil",
+    "evidence:anvil": "tsx script/evidence.ts --anvil"
+  },
+  "dependencies": {
+    "@mandate/core": "workspace:*",
+    "viem": "^2.57.7"
+  },
+  "main": "./ts/index.ts",
+  "types": "./ts/index.ts",
+  "exports": {
+    ".": "./ts/index.ts"
   }
 }
