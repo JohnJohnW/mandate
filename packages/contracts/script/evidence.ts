@@ -32,6 +32,8 @@ import {
   rationaleHash,
   type Intent,
 } from "@mandate/core";
+import { decodePaymentResponseHeader, wrapFetchWithPaymentFromConfig } from "@x402/fetch";
+import { ExactEvmScheme, toClientEvmSigner } from "@x402/evm";
 import { EXPLORERS, MANDATE_VAULT_ABI, MOCK_ERC20_ABI } from "../ts/index.js";
 import { CONTRACTS_DIR, ROOT, connect } from "./env.js";
 
@@ -259,17 +261,49 @@ if (existsSync(broadcastPath)) {
   });
 }
 
-push({
-  step: "3",
-  title: "ERC-8004 registration and setAgentWallet",
-  fn: "IdentityRegistry.register, setAgentWallet",
-  txHashes: [],
-  blocks: [],
-  status: "pending",
-  outcome: "Phase 5 (identity) not yet run",
-  proves:
-    "The agent and the oracle agent have on-chain identities; the vault is bound as the agent's wallet.",
-});
+// 3: ERC-8004 registration, from the identity registration record
+{
+  const idPath = `${CONTRACTS_DIR}deployments/identity-${c.chainId}.json`;
+  if (existsSync(idPath)) {
+    const id = JSON.parse(readFileSync(idPath, "utf8")) as {
+      registry: string;
+      agent: {
+        agentId: string;
+        registerTx: Hex;
+        setWalletTx: Hex;
+        registerBlock: number;
+        setWalletBlock: number;
+      };
+      oracle: { agentId: string; registerTx: Hex; registerBlock: number };
+    };
+    push({
+      step: "3",
+      title: "ERC-8004 registration of both agents and setAgentWallet to the vault",
+      fn: "register(agentURI) x2, setAgentWallet(agentId, vault, deadline, ownerSig)",
+      txHashes: [id.agent.registerTx, id.oracle.registerTx, id.agent.setWalletTx],
+      blocks: [
+        BigInt(id.agent.registerBlock),
+        BigInt(id.oracle.registerBlock),
+        BigInt(id.agent.setWalletBlock),
+      ],
+      status: "success",
+      outcome: `our agent #${id.agent.agentId}, oracle agent #${id.oracle.agentId} in registry ${id.registry}; vault bound as agent wallet`,
+      proves:
+        "Both agents carry a portable on-chain identity. The vault is the registered wallet of our agent, bound with the owner's ERC-1271 signature; the agent key alone cannot make that binding.",
+    });
+  } else {
+    push({
+      step: "3",
+      title: "ERC-8004 registration and setAgentWallet",
+      fn: "IdentityRegistry.register, setAgentWallet",
+      txHashes: [],
+      blocks: [],
+      status: "pending",
+      outcome: "identity registration not run on this chain (pnpm identity:register)",
+      proves: "",
+    });
+  }
+}
 
 // Mandate parameters as the chain sees them
 const ethMandate = await vaultRead<{
@@ -382,16 +416,87 @@ const small = perTx / 2n;
       proves: "",
     });
   }
-  push({
-    step: "6b",
-    title: "x402 USDC payment to the oracle agent",
-    fn: "EIP-3009 transferWithAuthorization via facilitator",
-    txHashes: [],
-    blocks: [],
-    status: "pending",
-    outcome: "Phase 5 (payments) not yet run",
-    proves: "Machine-to-machine payment settled on-chain from the petty cash float.",
-  });
+  // 6b: an x402 payment from the agent's petty cash to the oracle, settled by the facilitator
+  const oracleUrl = c.env.get("ORACLE_URL") || "http://localhost:4020";
+  let reachable: boolean;
+  try {
+    reachable = (await fetch(`${oracleUrl}/health`, { signal: AbortSignal.timeout(3000) })).ok;
+  } catch {
+    reachable = false;
+  }
+  if (!reachable) {
+    push({
+      step: "6b",
+      title: "x402 USDC payment to the oracle agent",
+      fn: "EIP-3009 transferWithAuthorization via facilitator",
+      txHashes: [],
+      blocks: [],
+      status: "skipped",
+      outcome: `oracle not reachable at ${oracleUrl}; start it and rerun`,
+      proves: "",
+    });
+  } else {
+    try {
+      const signer = toClientEvmSigner(
+        { address: c.agent.address, signTypedData: (m) => c.agent.signTypedData(m as never) },
+        c.publicClient as never,
+      );
+      const paidFetch = wrapFetchWithPaymentFromConfig(fetch, {
+        schemes: [{ network: "eip155:*", client: new ExactEvmScheme(signer) }],
+        spendControls: {
+          allowedAssets: [
+            { network: `eip155:${c.chainId}`, asset: usdc, maxAmountPerPayment: "10000" },
+          ],
+          maxAmountPerPayment: "0.01",
+        },
+      });
+      const res = await paidFetch(`${oracleUrl}/prices`);
+      const header = res.headers.get("PAYMENT-RESPONSE");
+      const settled = header
+        ? (decodePaymentResponseHeader(header) as {
+            success?: boolean;
+            transaction?: string;
+            payer?: string;
+          })
+        : undefined;
+      if (res.ok && settled?.transaction) {
+        const r = await c.publicClient.getTransactionReceipt({ hash: settled.transaction as Hex });
+        push({
+          step: "6b",
+          title: "x402 USDC payment to the oracle agent from petty cash",
+          fn: "USDC.transferWithAuthorization via the facilitator",
+          txHashes: [settled.transaction as Hex],
+          blocks: [r.blockNumber],
+          status: r.status === "success" ? "success" : "reverted",
+          outcome: `0.001 USDC paid by ${settled.payer ?? c.agent.address}; HTTP ${res.status}`,
+          proves:
+            "An agent paying another agent per request: the EIP-3009 authorization is signed by the agent's petty cash account and settled on-chain by the facilitator. The vault is never involved in the payment itself.",
+        });
+      } else {
+        push({
+          step: "6b",
+          title: "x402 USDC payment to the oracle agent",
+          fn: "EIP-3009 transferWithAuthorization via facilitator",
+          txHashes: [],
+          blocks: [],
+          status: "skipped",
+          outcome: `payment did not settle (HTTP ${res.status}${settled ? `, ${JSON.stringify(settled).slice(0, 120)}` : ""})`,
+          proves: "",
+        });
+      }
+    } catch (err) {
+      push({
+        step: "6b",
+        title: "x402 USDC payment to the oracle agent",
+        fn: "EIP-3009 transferWithAuthorization via facilitator",
+        txHashes: [],
+        blocks: [],
+        status: "skipped",
+        outcome: `payment failed: ${err instanceof Error ? err.message : String(err)}`,
+        proves: "",
+      });
+    }
+  }
 }
 
 // 7: over-cap attempt by the agent key directly

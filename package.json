@@ -29,7 +29,10 @@
     "dev:api:anvil": "pnpm --filter @mandate/api dev:anvil",
     "dev:web": "pnpm --filter @mandate/web dev",
     "contracts:deploy:anvil": "pnpm --filter @mandate/contracts deploy:anvil",
-    "evidence:anvil": "pnpm --filter @mandate/contracts evidence:anvil"
+    "evidence:anvil": "pnpm --filter @mandate/contracts evidence:anvil",
+    "identity:register": "pnpm --filter @mandate/contracts identity",
+    "identity:anvil": "pnpm --filter @mandate/contracts identity:anvil",
+    "dev:oracle:anvil": "pnpm --filter @mandate/oracle dev:anvil"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

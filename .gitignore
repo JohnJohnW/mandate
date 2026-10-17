@@ -46,3 +46,4 @@ packages/contracts/evidence/latest-31337.json
 # next.js
 apps/web/.next/
 apps/web/next-env.d.ts
+packages/contracts/deployments/identity-31337.json
