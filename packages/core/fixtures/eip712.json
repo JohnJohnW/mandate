@@ -1,0 +1,32 @@
+{
+  "name": "MandateVault",
+  "version": "1",
+  "intentTypeString": "Intent(bytes32 kind,address target,address token,uint256 amount,bytes32 dataHash,uint256 nonce,uint256 deadline,bytes32 rationaleHash)",
+  "intentTypeHash": "0x23e9e4fcaea519bd958b28d530c465c9611d527cebe398c51efdd122591df9c8",
+  "approvalTypeString": "Approval(bytes32 intentHash,uint256 deadline)",
+  "approvalTypeHash": "0x997235e7b72e3b127c37c5d4b5102f95b19e87d27b7fdefdf570933cd339d25d",
+  "kinds": {
+    "TRANSFER_NATIVE": "0xa28bcdba7aa6540ec3c3f004787711d7467c813b96e093343d03b434e1fbfa2e",
+    "TRANSFER_ERC20": "0x716c4d8d40356b0b53891d5ca4c9283c6c04176ae2c5a511cd7f21054619b160",
+    "CALL": "0x706a455ca44ffc9f46e1c567fb1a4fdf73956f8e912065b7c4c6af237e247d9c",
+    "APPROVE_ERC20": "0x05c415c702705b17fca237906f505e7072fd9ae3e0eb690e5435eb9be936f904",
+    "TOPUP_PETTY_CASH": "0x0e0837c008f3476037681e234d9748d39ff4768f80cadd1289dfd4c55fd26f4a"
+  },
+  "sample": {
+    "chainId": 84532,
+    "vault": "0x00000000000000000000000000000000000012AB",
+    "intent": {
+      "kind": "0x716c4d8d40356b0b53891d5ca4c9283c6c04176ae2c5a511cd7f21054619b160",
+      "target": "0x1111111111111111111111111111111111111111",
+      "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "amount": "1000000",
+      "dataHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "nonce": "7",
+      "deadline": "1800000000",
+      "rationaleHash": "0x5f5e1a3b7b1f6c3c2a7a3d9a6a4f2e1d0c9b8a7f6e5d4c3b2a19080706050403"
+    },
+    "intentHash": "0xfa4bbac74a9da641fe66279ba0ec19f22c7ec04d4d3355e56b4bfdbccb1abb8f",
+    "approvalDeadline": "1800003600",
+    "approvalHash": "0x80b581164ba5c44c53fd079b8a26aa05f1072aee6473e8e37ca6e917e1173dab"
+  }
+}
