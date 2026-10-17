@@ -20,7 +20,8 @@ packages/contracts/broadcast/**/dry-run/
 packages/contracts/lib/
 
 # runtime data
-data/
+/data/
+apps/*/data/
 *.db
 *.db-journal
 *.sqlite

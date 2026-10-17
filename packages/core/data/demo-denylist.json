@@ -1,0 +1,9 @@
+{
+  "source": "mandate demo denylist (synthetic addresses used by the Security Lab; not a real sanctions designation)",
+  "fetchedAt": "2026-10-18T00:00:00.000Z",
+  "count": 2,
+  "addresses": [
+    "0xbad0000000000000000000000000000000000bad",
+    "0xdead00000000000000000000000000000000dead"
+  ]
+}
