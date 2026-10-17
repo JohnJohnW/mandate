@@ -1,0 +1,1412 @@
+{
+  "cases": [
+    {
+      "autonomousPerTxCap": "498",
+      "autonomousWindowCap": "4226",
+      "windowSeconds": "3600",
+      "initialWindowStart": "1700000000",
+      "steps": [
+        {
+          "now": "1700001102",
+          "amount": "529",
+          "allowed": false,
+          "spentAfter": "0",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700001912",
+          "amount": "126",
+          "allowed": true,
+          "spentAfter": "126",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700003326",
+          "amount": "223",
+          "allowed": true,
+          "spentAfter": "349",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700004008",
+          "amount": "290",
+          "allowed": true,
+          "spentAfter": "290",
+          "windowStartAfter": "1700004008"
+        },
+        {
+          "now": "1700005262",
+          "amount": "448",
+          "allowed": true,
+          "spentAfter": "738",
+          "windowStartAfter": "1700004008"
+        },
+        {
+          "now": "1700006355",
+          "amount": "548",
+          "allowed": false,
+          "spentAfter": "738",
+          "windowStartAfter": "1700004008"
+        },
+        {
+          "now": "1700007421",
+          "amount": "464",
+          "allowed": true,
+          "spentAfter": "1202",
+          "windowStartAfter": "1700004008"
+        },
+        {
+          "now": "1700008582",
+          "amount": "49",
+          "allowed": true,
+          "spentAfter": "49",
+          "windowStartAfter": "1700008582"
+        },
+        {
+          "now": "1700008862",
+          "amount": "28",
+          "allowed": true,
+          "spentAfter": "77",
+          "windowStartAfter": "1700008582"
+        },
+        {
+          "now": "1700009820",
+          "amount": "107",
+          "allowed": true,
+          "spentAfter": "184",
+          "windowStartAfter": "1700008582"
+        },
+        {
+          "now": "1700010349",
+          "amount": "576",
+          "allowed": false,
+          "spentAfter": "184",
+          "windowStartAfter": "1700008582"
+        },
+        {
+          "now": "1700010689",
+          "amount": "123",
+          "allowed": true,
+          "spentAfter": "307",
+          "windowStartAfter": "1700008582"
+        },
+        {
+          "now": "1700011303",
+          "amount": "492",
+          "allowed": true,
+          "spentAfter": "799",
+          "windowStartAfter": "1700008582"
+        },
+        {
+          "now": "1700012012",
+          "amount": "51",
+          "allowed": true,
+          "spentAfter": "850",
+          "windowStartAfter": "1700008582"
+        },
+        {
+          "now": "1700012289",
+          "amount": "469",
+          "allowed": true,
+          "spentAfter": "469",
+          "windowStartAfter": "1700012289"
+        },
+        {
+          "now": "1700013289",
+          "amount": "101",
+          "allowed": true,
+          "spentAfter": "570",
+          "windowStartAfter": "1700012289"
+        },
+        {
+          "now": "1700014641",
+          "amount": "443",
+          "allowed": true,
+          "spentAfter": "1013",
+          "windowStartAfter": "1700012289"
+        },
+        {
+          "now": "1700015790",
+          "amount": "437",
+          "allowed": true,
+          "spentAfter": "1450",
+          "windowStartAfter": "1700012289"
+        },
+        {
+          "now": "1700016803",
+          "amount": "214",
+          "allowed": true,
+          "spentAfter": "214",
+          "windowStartAfter": "1700016803"
+        },
+        {
+          "now": "1700017528",
+          "amount": "215",
+          "allowed": true,
+          "spentAfter": "429",
+          "windowStartAfter": "1700016803"
+        },
+        {
+          "now": "1700018524",
+          "amount": "469",
+          "allowed": true,
+          "spentAfter": "898",
+          "windowStartAfter": "1700016803"
+        },
+        {
+          "now": "1700019471",
+          "amount": "224",
+          "allowed": true,
+          "spentAfter": "1122",
+          "windowStartAfter": "1700016803"
+        },
+        {
+          "now": "1700020337",
+          "amount": "489",
+          "allowed": true,
+          "spentAfter": "1611",
+          "windowStartAfter": "1700016803"
+        },
+        {
+          "now": "1700021709",
+          "amount": "405",
+          "allowed": true,
+          "spentAfter": "405",
+          "windowStartAfter": "1700021709"
+        }
+      ]
+    },
+    {
+      "autonomousPerTxCap": "946",
+      "autonomousWindowCap": "3106",
+      "windowSeconds": "86400",
+      "initialWindowStart": "1700000000",
+      "steps": [
+        {
+          "now": "1700004759",
+          "amount": "746",
+          "allowed": true,
+          "spentAfter": "746",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700027999",
+          "amount": "682",
+          "allowed": true,
+          "spentAfter": "1428",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700034198",
+          "amount": "54",
+          "allowed": true,
+          "spentAfter": "1482",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700060618",
+          "amount": "1082",
+          "allowed": false,
+          "spentAfter": "1482",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700063743",
+          "amount": "1009",
+          "allowed": false,
+          "spentAfter": "1482",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700079890",
+          "amount": "358",
+          "allowed": true,
+          "spentAfter": "1840",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700092637",
+          "amount": "1100",
+          "allowed": false,
+          "spentAfter": "0",
+          "windowStartAfter": "1700092637"
+        },
+        {
+          "now": "1700106592",
+          "amount": "987",
+          "allowed": false,
+          "spentAfter": "0",
+          "windowStartAfter": "1700092637"
+        },
+        {
+          "now": "1700115432",
+          "amount": "442",
+          "allowed": true,
+          "spentAfter": "442",
+          "windowStartAfter": "1700092637"
+        },
+        {
+          "now": "1700142962",
+          "amount": "186",
+          "allowed": true,
+          "spentAfter": "628",
+          "windowStartAfter": "1700092637"
+        },
+        {
+          "now": "1700152074",
+          "amount": "175",
+          "allowed": true,
+          "spentAfter": "803",
+          "windowStartAfter": "1700092637"
+        },
+        {
+          "now": "1700166247",
+          "amount": "954",
+          "allowed": false,
+          "spentAfter": "803",
+          "windowStartAfter": "1700092637"
+        },
+        {
+          "now": "1700189673",
+          "amount": "1026",
+          "allowed": false,
+          "spentAfter": "0",
+          "windowStartAfter": "1700189673"
+        },
+        {
+          "now": "1700190967",
+          "amount": "1053",
+          "allowed": false,
+          "spentAfter": "0",
+          "windowStartAfter": "1700189673"
+        },
+        {
+          "now": "1700225020",
+          "amount": "242",
+          "allowed": true,
+          "spentAfter": "242",
+          "windowStartAfter": "1700189673"
+        },
+        {
+          "now": "1700246073",
+          "amount": "816",
+          "allowed": true,
+          "spentAfter": "1058",
+          "windowStartAfter": "1700189673"
+        },
+        {
+          "now": "1700261040",
+          "amount": "74",
+          "allowed": true,
+          "spentAfter": "1132",
+          "windowStartAfter": "1700189673"
+        },
+        {
+          "now": "1700269751",
+          "amount": "585",
+          "allowed": true,
+          "spentAfter": "1717",
+          "windowStartAfter": "1700189673"
+        },
+        {
+          "now": "1700275605",
+          "amount": "463",
+          "allowed": true,
+          "spentAfter": "2180",
+          "windowStartAfter": "1700189673"
+        },
+        {
+          "now": "1700305893",
+          "amount": "817",
+          "allowed": true,
+          "spentAfter": "817",
+          "windowStartAfter": "1700305893"
+        },
+        {
+          "now": "1700329101",
+          "amount": "1059",
+          "allowed": false,
+          "spentAfter": "817",
+          "windowStartAfter": "1700305893"
+        },
+        {
+          "now": "1700333236",
+          "amount": "89",
+          "allowed": true,
+          "spentAfter": "906",
+          "windowStartAfter": "1700305893"
+        },
+        {
+          "now": "1700347494",
+          "amount": "525",
+          "allowed": true,
+          "spentAfter": "1431",
+          "windowStartAfter": "1700305893"
+        },
+        {
+          "now": "1700372538",
+          "amount": "72",
+          "allowed": true,
+          "spentAfter": "1503",
+          "windowStartAfter": "1700305893"
+        }
+      ]
+    },
+    {
+      "autonomousPerTxCap": "973",
+      "autonomousWindowCap": "3348",
+      "windowSeconds": "600",
+      "initialWindowStart": "1700000000",
+      "steps": [
+        {
+          "now": "1700000163",
+          "amount": "792",
+          "allowed": true,
+          "spentAfter": "792",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700000170",
+          "amount": "519",
+          "allowed": true,
+          "spentAfter": "1311",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700000339",
+          "amount": "215",
+          "allowed": true,
+          "spentAfter": "1526",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700000578",
+          "amount": "917",
+          "allowed": true,
+          "spentAfter": "2443",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700000792",
+          "amount": "619",
+          "allowed": true,
+          "spentAfter": "619",
+          "windowStartAfter": "1700000792"
+        },
+        {
+          "now": "1700000825",
+          "amount": "822",
+          "allowed": true,
+          "spentAfter": "1441",
+          "windowStartAfter": "1700000792"
+        },
+        {
+          "now": "1700000973",
+          "amount": "576",
+          "allowed": true,
+          "spentAfter": "2017",
+          "windowStartAfter": "1700000792"
+        },
+        {
+          "now": "1700001093",
+          "amount": "803",
+          "allowed": true,
+          "spentAfter": "2820",
+          "windowStartAfter": "1700000792"
+        },
+        {
+          "now": "1700001093",
+          "amount": "928",
+          "allowed": false,
+          "spentAfter": "2820",
+          "windowStartAfter": "1700000792"
+        },
+        {
+          "now": "1700001099",
+          "amount": "1017",
+          "allowed": false,
+          "spentAfter": "2820",
+          "windowStartAfter": "1700000792"
+        },
+        {
+          "now": "1700001229",
+          "amount": "831",
+          "allowed": false,
+          "spentAfter": "2820",
+          "windowStartAfter": "1700000792"
+        },
+        {
+          "now": "1700001368",
+          "amount": "739",
+          "allowed": false,
+          "spentAfter": "2820",
+          "windowStartAfter": "1700000792"
+        },
+        {
+          "now": "1700001541",
+          "amount": "1103",
+          "allowed": false,
+          "spentAfter": "0",
+          "windowStartAfter": "1700001541"
+        },
+        {
+          "now": "1700001745",
+          "amount": "1082",
+          "allowed": false,
+          "spentAfter": "0",
+          "windowStartAfter": "1700001541"
+        },
+        {
+          "now": "1700001906",
+          "amount": "890",
+          "allowed": true,
+          "spentAfter": "890",
+          "windowStartAfter": "1700001541"
+        },
+        {
+          "now": "1700001979",
+          "amount": "1157",
+          "allowed": false,
+          "spentAfter": "890",
+          "windowStartAfter": "1700001541"
+        },
+        {
+          "now": "1700002033",
+          "amount": "801",
+          "allowed": true,
+          "spentAfter": "1691",
+          "windowStartAfter": "1700001541"
+        },
+        {
+          "now": "1700002193",
+          "amount": "379",
+          "allowed": true,
+          "spentAfter": "379",
+          "windowStartAfter": "1700002193"
+        },
+        {
+          "now": "1700002423",
+          "amount": "263",
+          "allowed": true,
+          "spentAfter": "642",
+          "windowStartAfter": "1700002193"
+        },
+        {
+          "now": "1700002574",
+          "amount": "79",
+          "allowed": true,
+          "spentAfter": "721",
+          "windowStartAfter": "1700002193"
+        },
+        {
+          "now": "1700002806",
+          "amount": "519",
+          "allowed": true,
+          "spentAfter": "519",
+          "windowStartAfter": "1700002806"
+        },
+        {
+          "now": "1700002982",
+          "amount": "214",
+          "allowed": true,
+          "spentAfter": "733",
+          "windowStartAfter": "1700002806"
+        },
+        {
+          "now": "1700003123",
+          "amount": "414",
+          "allowed": true,
+          "spentAfter": "1147",
+          "windowStartAfter": "1700002806"
+        },
+        {
+          "now": "1700003272",
+          "amount": "88",
+          "allowed": true,
+          "spentAfter": "1235",
+          "windowStartAfter": "1700002806"
+        }
+      ]
+    },
+    {
+      "autonomousPerTxCap": "345",
+      "autonomousWindowCap": "2668",
+      "windowSeconds": "3600",
+      "initialWindowStart": "1700000000",
+      "steps": [
+        {
+          "now": "1700000208",
+          "amount": "222",
+          "allowed": true,
+          "spentAfter": "222",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700000566",
+          "amount": "272",
+          "allowed": true,
+          "spentAfter": "494",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700001989",
+          "amount": "69",
+          "allowed": true,
+          "spentAfter": "563",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700003140",
+          "amount": "73",
+          "allowed": true,
+          "spentAfter": "636",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700004278",
+          "amount": "270",
+          "allowed": true,
+          "spentAfter": "270",
+          "windowStartAfter": "1700004278"
+        },
+        {
+          "now": "1700004588",
+          "amount": "17",
+          "allowed": true,
+          "spentAfter": "287",
+          "windowStartAfter": "1700004278"
+        },
+        {
+          "now": "1700005963",
+          "amount": "222",
+          "allowed": true,
+          "spentAfter": "509",
+          "windowStartAfter": "1700004278"
+        },
+        {
+          "now": "1700007066",
+          "amount": "355",
+          "allowed": false,
+          "spentAfter": "509",
+          "windowStartAfter": "1700004278"
+        },
+        {
+          "now": "1700007942",
+          "amount": "165",
+          "allowed": true,
+          "spentAfter": "165",
+          "windowStartAfter": "1700007942"
+        },
+        {
+          "now": "1700008312",
+          "amount": "213",
+          "allowed": true,
+          "spentAfter": "378",
+          "windowStartAfter": "1700007942"
+        },
+        {
+          "now": "1700008903",
+          "amount": "232",
+          "allowed": true,
+          "spentAfter": "610",
+          "windowStartAfter": "1700007942"
+        },
+        {
+          "now": "1700008919",
+          "amount": "363",
+          "allowed": false,
+          "spentAfter": "610",
+          "windowStartAfter": "1700007942"
+        },
+        {
+          "now": "1700009146",
+          "amount": "290",
+          "allowed": true,
+          "spentAfter": "900",
+          "windowStartAfter": "1700007942"
+        },
+        {
+          "now": "1700009642",
+          "amount": "187",
+          "allowed": true,
+          "spentAfter": "1087",
+          "windowStartAfter": "1700007942"
+        },
+        {
+          "now": "1700010215",
+          "amount": "19",
+          "allowed": true,
+          "spentAfter": "1106",
+          "windowStartAfter": "1700007942"
+        },
+        {
+          "now": "1700011461",
+          "amount": "103",
+          "allowed": true,
+          "spentAfter": "1209",
+          "windowStartAfter": "1700007942"
+        },
+        {
+          "now": "1700012185",
+          "amount": "9",
+          "allowed": true,
+          "spentAfter": "9",
+          "windowStartAfter": "1700012185"
+        },
+        {
+          "now": "1700012445",
+          "amount": "178",
+          "allowed": true,
+          "spentAfter": "187",
+          "windowStartAfter": "1700012185"
+        },
+        {
+          "now": "1700013738",
+          "amount": "201",
+          "allowed": true,
+          "spentAfter": "388",
+          "windowStartAfter": "1700012185"
+        },
+        {
+          "now": "1700014933",
+          "amount": "178",
+          "allowed": true,
+          "spentAfter": "566",
+          "windowStartAfter": "1700012185"
+        },
+        {
+          "now": "1700015526",
+          "amount": "392",
+          "allowed": false,
+          "spentAfter": "566",
+          "windowStartAfter": "1700012185"
+        },
+        {
+          "now": "1700016294",
+          "amount": "257",
+          "allowed": true,
+          "spentAfter": "257",
+          "windowStartAfter": "1700016294"
+        },
+        {
+          "now": "1700017643",
+          "amount": "174",
+          "allowed": true,
+          "spentAfter": "431",
+          "windowStartAfter": "1700016294"
+        },
+        {
+          "now": "1700017746",
+          "amount": "314",
+          "allowed": true,
+          "spentAfter": "745",
+          "windowStartAfter": "1700016294"
+        }
+      ]
+    },
+    {
+      "autonomousPerTxCap": "880",
+      "autonomousWindowCap": "4184",
+      "windowSeconds": "86400",
+      "initialWindowStart": "1700000000",
+      "steps": [
+        {
+          "now": "1700013433",
+          "amount": "783",
+          "allowed": true,
+          "spentAfter": "783",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700013487",
+          "amount": "895",
+          "allowed": false,
+          "spentAfter": "783",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700038731",
+          "amount": "455",
+          "allowed": true,
+          "spentAfter": "1238",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700069303",
+          "amount": "339",
+          "allowed": true,
+          "spentAfter": "1577",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700100860",
+          "amount": "604",
+          "allowed": true,
+          "spentAfter": "604",
+          "windowStartAfter": "1700100860"
+        },
+        {
+          "now": "1700127349",
+          "amount": "720",
+          "allowed": true,
+          "spentAfter": "1324",
+          "windowStartAfter": "1700100860"
+        },
+        {
+          "now": "1700128621",
+          "amount": "55",
+          "allowed": true,
+          "spentAfter": "1379",
+          "windowStartAfter": "1700100860"
+        },
+        {
+          "now": "1700151172",
+          "amount": "482",
+          "allowed": true,
+          "spentAfter": "1861",
+          "windowStartAfter": "1700100860"
+        },
+        {
+          "now": "1700159094",
+          "amount": "41",
+          "allowed": true,
+          "spentAfter": "1902",
+          "windowStartAfter": "1700100860"
+        },
+        {
+          "now": "1700163823",
+          "amount": "311",
+          "allowed": true,
+          "spentAfter": "2213",
+          "windowStartAfter": "1700100860"
+        },
+        {
+          "now": "1700172311",
+          "amount": "791",
+          "allowed": true,
+          "spentAfter": "3004",
+          "windowStartAfter": "1700100860"
+        },
+        {
+          "now": "1700206017",
+          "amount": "139",
+          "allowed": true,
+          "spentAfter": "139",
+          "windowStartAfter": "1700206017"
+        },
+        {
+          "now": "1700206129",
+          "amount": "907",
+          "allowed": false,
+          "spentAfter": "139",
+          "windowStartAfter": "1700206017"
+        },
+        {
+          "now": "1700226898",
+          "amount": "118",
+          "allowed": true,
+          "spentAfter": "257",
+          "windowStartAfter": "1700206017"
+        },
+        {
+          "now": "1700239985",
+          "amount": "891",
+          "allowed": false,
+          "spentAfter": "257",
+          "windowStartAfter": "1700206017"
+        },
+        {
+          "now": "1700241194",
+          "amount": "158",
+          "allowed": true,
+          "spentAfter": "415",
+          "windowStartAfter": "1700206017"
+        },
+        {
+          "now": "1700270417",
+          "amount": "779",
+          "allowed": true,
+          "spentAfter": "1194",
+          "windowStartAfter": "1700206017"
+        },
+        {
+          "now": "1700301395",
+          "amount": "284",
+          "allowed": true,
+          "spentAfter": "284",
+          "windowStartAfter": "1700301395"
+        },
+        {
+          "now": "1700328416",
+          "amount": "96",
+          "allowed": true,
+          "spentAfter": "380",
+          "windowStartAfter": "1700301395"
+        },
+        {
+          "now": "1700344421",
+          "amount": "131",
+          "allowed": true,
+          "spentAfter": "511",
+          "windowStartAfter": "1700301395"
+        },
+        {
+          "now": "1700362517",
+          "amount": "152",
+          "allowed": true,
+          "spentAfter": "663",
+          "windowStartAfter": "1700301395"
+        },
+        {
+          "now": "1700396681",
+          "amount": "347",
+          "allowed": true,
+          "spentAfter": "347",
+          "windowStartAfter": "1700396681"
+        },
+        {
+          "now": "1700413763",
+          "amount": "500",
+          "allowed": true,
+          "spentAfter": "847",
+          "windowStartAfter": "1700396681"
+        },
+        {
+          "now": "1700438836",
+          "amount": "514",
+          "allowed": true,
+          "spentAfter": "1361",
+          "windowStartAfter": "1700396681"
+        }
+      ]
+    },
+    {
+      "autonomousPerTxCap": "988",
+      "autonomousWindowCap": "3543",
+      "windowSeconds": "600",
+      "initialWindowStart": "1700000000",
+      "steps": [
+        {
+          "now": "1700000086",
+          "amount": "86",
+          "allowed": true,
+          "spentAfter": "86",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700000189",
+          "amount": "670",
+          "allowed": true,
+          "spentAfter": "756",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700000385",
+          "amount": "647",
+          "allowed": true,
+          "spentAfter": "1403",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700000434",
+          "amount": "893",
+          "allowed": true,
+          "spentAfter": "2296",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700000583",
+          "amount": "402",
+          "allowed": true,
+          "spentAfter": "2698",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700000672",
+          "amount": "542",
+          "allowed": true,
+          "spentAfter": "542",
+          "windowStartAfter": "1700000672"
+        },
+        {
+          "now": "1700000740",
+          "amount": "730",
+          "allowed": true,
+          "spentAfter": "1272",
+          "windowStartAfter": "1700000672"
+        },
+        {
+          "now": "1700000937",
+          "amount": "564",
+          "allowed": true,
+          "spentAfter": "1836",
+          "windowStartAfter": "1700000672"
+        },
+        {
+          "now": "1700001036",
+          "amount": "1107",
+          "allowed": false,
+          "spentAfter": "1836",
+          "windowStartAfter": "1700000672"
+        },
+        {
+          "now": "1700001222",
+          "amount": "284",
+          "allowed": true,
+          "spentAfter": "2120",
+          "windowStartAfter": "1700000672"
+        },
+        {
+          "now": "1700001347",
+          "amount": "244",
+          "allowed": true,
+          "spentAfter": "244",
+          "windowStartAfter": "1700001347"
+        },
+        {
+          "now": "1700001493",
+          "amount": "283",
+          "allowed": true,
+          "spentAfter": "527",
+          "windowStartAfter": "1700001347"
+        },
+        {
+          "now": "1700001650",
+          "amount": "714",
+          "allowed": true,
+          "spentAfter": "1241",
+          "windowStartAfter": "1700001347"
+        },
+        {
+          "now": "1700001746",
+          "amount": "65",
+          "allowed": true,
+          "spentAfter": "1306",
+          "windowStartAfter": "1700001347"
+        },
+        {
+          "now": "1700001849",
+          "amount": "326",
+          "allowed": true,
+          "spentAfter": "1632",
+          "windowStartAfter": "1700001347"
+        },
+        {
+          "now": "1700002029",
+          "amount": "606",
+          "allowed": true,
+          "spentAfter": "606",
+          "windowStartAfter": "1700002029"
+        },
+        {
+          "now": "1700002042",
+          "amount": "74",
+          "allowed": true,
+          "spentAfter": "680",
+          "windowStartAfter": "1700002029"
+        },
+        {
+          "now": "1700002214",
+          "amount": "837",
+          "allowed": true,
+          "spentAfter": "1517",
+          "windowStartAfter": "1700002029"
+        },
+        {
+          "now": "1700002300",
+          "amount": "643",
+          "allowed": true,
+          "spentAfter": "2160",
+          "windowStartAfter": "1700002029"
+        },
+        {
+          "now": "1700002522",
+          "amount": "1119",
+          "allowed": false,
+          "spentAfter": "2160",
+          "windowStartAfter": "1700002029"
+        },
+        {
+          "now": "1700002523",
+          "amount": "115",
+          "allowed": true,
+          "spentAfter": "2275",
+          "windowStartAfter": "1700002029"
+        },
+        {
+          "now": "1700002568",
+          "amount": "988",
+          "allowed": true,
+          "spentAfter": "3263",
+          "windowStartAfter": "1700002029"
+        },
+        {
+          "now": "1700002654",
+          "amount": "1025",
+          "allowed": false,
+          "spentAfter": "0",
+          "windowStartAfter": "1700002654"
+        },
+        {
+          "now": "1700002706",
+          "amount": "79",
+          "allowed": true,
+          "spentAfter": "79",
+          "windowStartAfter": "1700002654"
+        }
+      ]
+    },
+    {
+      "autonomousPerTxCap": "739",
+      "autonomousWindowCap": "3872",
+      "windowSeconds": "3600",
+      "initialWindowStart": "1700000000",
+      "steps": [
+        {
+          "now": "1700000402",
+          "amount": "573",
+          "allowed": true,
+          "spentAfter": "573",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700001502",
+          "amount": "601",
+          "allowed": true,
+          "spentAfter": "1174",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700002665",
+          "amount": "500",
+          "allowed": true,
+          "spentAfter": "1674",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700003649",
+          "amount": "337",
+          "allowed": true,
+          "spentAfter": "337",
+          "windowStartAfter": "1700003649"
+        },
+        {
+          "now": "1700004180",
+          "amount": "200",
+          "allowed": true,
+          "spentAfter": "537",
+          "windowStartAfter": "1700003649"
+        },
+        {
+          "now": "1700004263",
+          "amount": "443",
+          "allowed": true,
+          "spentAfter": "980",
+          "windowStartAfter": "1700003649"
+        },
+        {
+          "now": "1700005014",
+          "amount": "89",
+          "allowed": true,
+          "spentAfter": "1069",
+          "windowStartAfter": "1700003649"
+        },
+        {
+          "now": "1700005789",
+          "amount": "240",
+          "allowed": true,
+          "spentAfter": "1309",
+          "windowStartAfter": "1700003649"
+        },
+        {
+          "now": "1700006376",
+          "amount": "343",
+          "allowed": true,
+          "spentAfter": "1652",
+          "windowStartAfter": "1700003649"
+        },
+        {
+          "now": "1700006513",
+          "amount": "434",
+          "allowed": true,
+          "spentAfter": "2086",
+          "windowStartAfter": "1700003649"
+        },
+        {
+          "now": "1700006737",
+          "amount": "631",
+          "allowed": true,
+          "spentAfter": "2717",
+          "windowStartAfter": "1700003649"
+        },
+        {
+          "now": "1700006861",
+          "amount": "576",
+          "allowed": true,
+          "spentAfter": "3293",
+          "windowStartAfter": "1700003649"
+        },
+        {
+          "now": "1700007465",
+          "amount": "88",
+          "allowed": true,
+          "spentAfter": "88",
+          "windowStartAfter": "1700007465"
+        },
+        {
+          "now": "1700008324",
+          "amount": "72",
+          "allowed": true,
+          "spentAfter": "160",
+          "windowStartAfter": "1700007465"
+        },
+        {
+          "now": "1700009234",
+          "amount": "678",
+          "allowed": true,
+          "spentAfter": "838",
+          "windowStartAfter": "1700007465"
+        },
+        {
+          "now": "1700010323",
+          "amount": "233",
+          "allowed": true,
+          "spentAfter": "1071",
+          "windowStartAfter": "1700007465"
+        },
+        {
+          "now": "1700011484",
+          "amount": "418",
+          "allowed": true,
+          "spentAfter": "418",
+          "windowStartAfter": "1700011484"
+        },
+        {
+          "now": "1700012889",
+          "amount": "591",
+          "allowed": true,
+          "spentAfter": "1009",
+          "windowStartAfter": "1700011484"
+        },
+        {
+          "now": "1700014267",
+          "amount": "419",
+          "allowed": true,
+          "spentAfter": "1428",
+          "windowStartAfter": "1700011484"
+        },
+        {
+          "now": "1700014731",
+          "amount": "716",
+          "allowed": true,
+          "spentAfter": "2144",
+          "windowStartAfter": "1700011484"
+        },
+        {
+          "now": "1700015406",
+          "amount": "274",
+          "allowed": true,
+          "spentAfter": "274",
+          "windowStartAfter": "1700015406"
+        },
+        {
+          "now": "1700016083",
+          "amount": "313",
+          "allowed": true,
+          "spentAfter": "587",
+          "windowStartAfter": "1700015406"
+        },
+        {
+          "now": "1700016083",
+          "amount": "864",
+          "allowed": false,
+          "spentAfter": "587",
+          "windowStartAfter": "1700015406"
+        },
+        {
+          "now": "1700017442",
+          "amount": "418",
+          "allowed": true,
+          "spentAfter": "1005",
+          "windowStartAfter": "1700015406"
+        }
+      ]
+    },
+    {
+      "autonomousPerTxCap": "762",
+      "autonomousWindowCap": "1862",
+      "windowSeconds": "86400",
+      "initialWindowStart": "1700000000",
+      "steps": [
+        {
+          "now": "1700020538",
+          "amount": "708",
+          "allowed": true,
+          "spentAfter": "708",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700023350",
+          "amount": "894",
+          "allowed": false,
+          "spentAfter": "708",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700041369",
+          "amount": "478",
+          "allowed": true,
+          "spentAfter": "1186",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700045233",
+          "amount": "248",
+          "allowed": true,
+          "spentAfter": "1434",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700076092",
+          "amount": "885",
+          "allowed": false,
+          "spentAfter": "1434",
+          "windowStartAfter": "1700000000"
+        },
+        {
+          "now": "1700088891",
+          "amount": "881",
+          "allowed": false,
+          "spentAfter": "0",
+          "windowStartAfter": "1700088891"
+        },
+        {
+          "now": "1700101287",
+          "amount": "890",
+          "allowed": false,
+          "spentAfter": "0",
+          "windowStartAfter": "1700088891"
+        },
+        {
+          "now": "1700129943",
+          "amount": "247",
+          "allowed": true,
+          "spentAfter": "247",
+          "windowStartAfter": "1700088891"
+        },
+        {
+          "now": "1700130586",
+          "amount": "289",
+          "allowed": true,
+          "spentAfter": "536",
+          "windowStartAfter": "1700088891"
+        },
+        {
+          "now": "1700134056",
+          "amount": "874",
+          "allowed": false,
+          "spentAfter": "536",
+          "windowStartAfter": "1700088891"
+        },
+        {
+          "now": "1700139075",
+          "amount": "269",
+          "allowed": true,
+          "spentAfter": "805",
+          "windowStartAfter": "1700088891"
+        },
+        {
+          "now": "1700146725",
+          "amount": "472",
+          "allowed": true,
+          "spentAfter": "1277",
+          "windowStartAfter": "1700088891"
+        },
+        {
+          "now": "1700150665",
+          "amount": "499",
+          "allowed": true,
+          "spentAfter": "1776",
+          "windowStartAfter": "1700088891"
+        },
+        {
+          "now": "1700171175",
+          "amount": "776",
+          "allowed": false,
+          "spentAfter": "1776",
+          "windowStartAfter": "1700088891"
+        },
+        {
+          "now": "1700179648",
+          "amount": "187",
+          "allowed": true,
+          "spentAfter": "187",
+          "windowStartAfter": "1700179648"
+        },
+        {
+          "now": "1700210836",
+          "amount": "171",
+          "allowed": true,
+          "spentAfter": "358",
+          "windowStartAfter": "1700179648"
+        },
+        {
+          "now": "1700228443",
+          "amount": "728",
+          "allowed": true,
+          "spentAfter": "1086",
+          "windowStartAfter": "1700179648"
+        },
+        {
+          "now": "1700231832",
+          "amount": "277",
+          "allowed": true,
+          "spentAfter": "1363",
+          "windowStartAfter": "1700179648"
+        },
+        {
+          "now": "1700242247",
+          "amount": "467",
+          "allowed": true,
+          "spentAfter": "1830",
+          "windowStartAfter": "1700179648"
+        },
+        {
+          "now": "1700268571",
+          "amount": "235",
+          "allowed": true,
+          "spentAfter": "235",
+          "windowStartAfter": "1700268571"
+        },
+        {
+          "now": "1700293902",
+          "amount": "678",
+          "allowed": true,
+          "spentAfter": "913",
+          "windowStartAfter": "1700268571"
+        },
+        {
+          "now": "1700309096",
+          "amount": "179",
+          "allowed": true,
+          "spentAfter": "1092",
+          "windowStartAfter": "1700268571"
+        },
+        {
+          "now": "1700314322",
+          "amount": "21",
+          "allowed": true,
+          "spentAfter": "1113",
+          "windowStartAfter": "1700268571"
+        },
+        {
+          "now": "1700340942",
+          "amount": "897",
+          "allowed": false,
+          "spentAfter": "1113",
+          "windowStartAfter": "1700268571"
+        }
+      ]
+    }
+  ]
+}
