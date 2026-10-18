@@ -70,8 +70,12 @@ Return ONLY a single JSON object and nothing else: no prose, no code fence.`,
           temperature: 0,
         });
         const parsed = extractJson(text);
-        if (parsed) return planSchema.parse(parsed);
-        throw new Error("no JSON object found in the reply");
+        if (parsed !== undefined) return planSchema.parse(parsed);
+        return {
+          summary: "planner error",
+          steps: [],
+          reply: "I could not produce a valid plan (the model returned no JSON object). Nothing was executed.",
+        };
       } catch (txtErr) {
         const detail = txtErr instanceof Error ? txtErr.message : String(txtErr);
         void objErr;
