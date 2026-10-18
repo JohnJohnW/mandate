@@ -37,7 +37,7 @@ The two attacks only the vault stops are a compromised agent key and a kill-swit
 
 ```bash
 pnpm install
-pnpm --filter @mandate/contracts setup
+pnpm contracts:setup
 pnpm keys:generate                  # prints the owner, agent and oracle addresses
 anvil --chain-id 31337 --block-time 1   # in another terminal
 # fund owner and agent from an Anvil account (see docs/RUNBOOK.md), then:

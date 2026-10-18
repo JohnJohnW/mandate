@@ -8,7 +8,7 @@ See docs/RUNBOOK.md for prerequisites (Node 22, pnpm 10, Foundry) and the instal
 
 ```bash
 pnpm install
-pnpm --filter @mandate/contracts setup
+pnpm contracts:setup
 pnpm keys:generate
 ```
 

@@ -33,7 +33,8 @@
     "identity:register": "pnpm --filter @mandate/contracts identity",
     "identity:anvil": "pnpm --filter @mandate/contracts identity:anvil",
     "dev:oracle:anvil": "pnpm --filter @mandate/oracle dev:anvil",
-    "attacks:anvil": "pnpm --filter @mandate/api attacks:anvil"
+    "attacks:anvil": "pnpm --filter @mandate/api attacks:anvil",
+    "contracts:setup": "pnpm --filter @mandate/contracts run install-deps"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

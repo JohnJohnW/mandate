@@ -15,7 +15,7 @@ Why read this: it is the required deployment-instructions deliverable. It takes 
 
 ```bash
 pnpm install
-pnpm --filter @mandate/contracts setup   # installs forge-std and OpenZeppelin into lib/ (not committed)
+pnpm contracts:setup   # installs forge-std and OpenZeppelin into lib/ (not committed)
 pnpm keys:generate                        # writes testnet keys to .env, prints the owner, agent and oracle addresses
 ```
 
