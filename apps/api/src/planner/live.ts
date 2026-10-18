@@ -4,7 +4,7 @@
  * empty plan with an explanation, never a free-form action.
  */
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
-import { generateObject } from "ai";
+import { generateObject, generateText } from "ai";
 import type { Config } from "../config.js";
 import { planSchema, type Plan, type Planner, type PlannerInput } from "./types.js";
 
@@ -46,21 +46,74 @@ export class LivePlanner implements Planner {
       `Quarantined content available by reference only: ${JSON.stringify(input.quarantined)}`,
       `Tools: ${JSON.stringify(input.tools)}`,
     ].join("\n\n");
+    const model = this.provider.chatModel(this.cfg.llm.model);
+    // Primary path: structured output via the provider's JSON mode.
     try {
       const { object } = await generateObject({
-        model: this.provider.chatModel(this.cfg.llm.model),
+        model,
         schema: planSchema,
         system: SYSTEM,
         prompt,
         temperature: 0,
       });
       return planSchema.parse(object);
-    } catch (err) {
-      return {
-        summary: "planner error",
-        steps: [],
-        reply: `I could not produce a valid plan (${err instanceof Error ? err.message : String(err)}). Nothing was executed.`,
-      };
+    } catch (objErr) {
+      // Fallback for endpoints that do not honour response_format: ask for plain text and
+      // parse the first JSON object out of the reply. The schema still validates the result,
+      // so an endpoint that cannot do JSON mode degrades to this path rather than failing.
+      try {
+        const { text } = await generateText({
+          model,
+          system: `${SYSTEM}
+Return ONLY a single JSON object and nothing else: no prose, no code fence.`,
+          prompt,
+          temperature: 0,
+        });
+        const parsed = extractJson(text);
+        if (parsed) return planSchema.parse(parsed);
+        throw new Error("no JSON object found in the reply");
+      } catch (txtErr) {
+        const detail = txtErr instanceof Error ? txtErr.message : String(txtErr);
+        void objErr;
+        return {
+          summary: "planner error",
+          steps: [],
+          reply: `I could not produce a valid plan (${detail}). Nothing was executed.`,
+        };
+      }
     }
   }
+}
+
+/** Pulls the first balanced JSON object out of a model reply, tolerating a code fence or prose. */
+function extractJson(text: string): unknown {
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  const body = fenced ? fenced[1]! : text;
+  const start = body.indexOf("{");
+  if (start === -1) return undefined;
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = start; i < body.length; i++) {
+    const ch = body[i]!;
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === "\\") escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') inString = true;
+    else if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        try {
+          return JSON.parse(body.slice(start, i + 1));
+        } catch {
+          return undefined;
+        }
+      }
+    }
+  }
+  return undefined;
 }
