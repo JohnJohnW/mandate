@@ -34,6 +34,18 @@ export const scenarioSchema = z.object({
   }),
   expected_stop: z.array(z.enum(["L0", "L1", "L2", "L3", "L4", "L5", "L6", "L7"])),
   notes: z.string(),
+  // What the attack is trying to get executed, declared as data. The harness replays this
+  // against each configuration's real defences; it never parses the payload to decide.
+  attempt: z.object({
+    kind: z.enum(["TRANSFER_NATIVE", "TRANSFER_ERC20", "APPROVE_ERC20"]),
+    target: z.string(),
+    token: z.enum(["ETH", "USDC"]),
+    amount: z.string(), // human units, "all" for the whole balance, "max" for an unlimited approval
+    // "planner": the attack must first fool the agent's planning to reach enforcement.
+    // "direct_key": the attacker holds the agent key and bypasses all software.
+    // "kill_switch": the owner revokes or pauses, and the attacker's process tries anyway.
+    reaches: z.enum(["planner", "direct_key", "kill_switch"]).default("planner"),
+  }),
 });
 export type Scenario = z.infer<typeof scenarioSchema>;
 
