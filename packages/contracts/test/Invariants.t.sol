@@ -62,10 +62,16 @@ contract Handler is Test {
         return abi.encodePacked(r, s, v);
     }
 
-    function _syncWindow() internal {
-        if (block.timestamp >= uint256(ghostWindowStart) + WINDOW) {
-            ghostWindowStart = uint64(block.timestamp);
-            ghostCoSignedInWindow = 0;
+    /// @dev Mirror the contract's window exactly: read the contract's own windowStart after an op.
+    ///      When it changed, the window rolled on this op, so the co-signed portion of the new
+    ///      window is just this op's co-signed amount; otherwise accumulate.
+    function _afterOp(uint256 coSignedAmount) internal {
+        uint64 ws = vault.getAssetMandate(agent, address(0)).windowStart;
+        if (ws != ghostWindowStart) {
+            ghostWindowStart = ws;
+            ghostCoSignedInWindow = coSignedAmount;
+        } else {
+            ghostCoSignedInWindow += coSignedAmount;
         }
     }
 
@@ -80,7 +86,7 @@ contract Handler is Test {
             return;
         }
         if (ok) {
-            _syncWindow();
+            _afterOp(0);
             ghostExecutions++;
             ghostOutflow += amount;
             assertFalse(toStranger, "stranger is not allowlisted");
@@ -106,10 +112,9 @@ contract Handler is Test {
             return;
         }
         if (ok) {
-            _syncWindow();
+            _afterOp(amount);
             ghostExecutions++;
             ghostOutflow += amount;
-            ghostCoSignedInWindow += amount;
             assertLe(amount, COSIGN_CAP, "co-sign cap");
             assertTrue(vault.consumedApprovals(ih), "approval marked consumed");
             (,, uint256 nonce) = vault.getAgent(agent);
@@ -125,7 +130,8 @@ contract Handler is Test {
     function warp(uint32 secs) external {
         secs = uint32(bound(secs, 1, 2 days));
         vm.warp(block.timestamp + secs);
-        _syncWindow();
+        // The contract does not roll its window until the next agent call, so the ghost does not
+        // either; _afterOp keeps the ghost tied to the contract's actual windowStart.
     }
 
     function pauseToggle(bool p) external {
