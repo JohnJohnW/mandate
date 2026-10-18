@@ -47,3 +47,5 @@ packages/contracts/evidence/latest-31337.json
 apps/web/.next/
 apps/web/next-env.d.ts
 packages/contracts/deployments/identity-31337.json
+packages/attacks/results/*-31337-*.json
+packages/attacks/results/latest-31337.json

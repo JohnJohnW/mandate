@@ -24,7 +24,7 @@
     "contracts:test": "pnpm --filter @mandate/contracts test",
     "contracts:deploy": "pnpm --filter @mandate/contracts deploy",
     "evidence:run": "pnpm --filter @mandate/contracts evidence",
-    "attacks:run": "pnpm --filter @mandate/attacks run:all",
+    "attacks:run": "pnpm --filter @mandate/api attacks",
     "submission:build": "tsx scripts/build-submission.ts",
     "dev:api:anvil": "pnpm --filter @mandate/api dev:anvil",
     "dev:web": "pnpm --filter @mandate/web dev",
@@ -32,7 +32,8 @@
     "evidence:anvil": "pnpm --filter @mandate/contracts evidence:anvil",
     "identity:register": "pnpm --filter @mandate/contracts identity",
     "identity:anvil": "pnpm --filter @mandate/contracts identity:anvil",
-    "dev:oracle:anvil": "pnpm --filter @mandate/oracle dev:anvil"
+    "dev:oracle:anvil": "pnpm --filter @mandate/oracle dev:anvil",
+    "attacks:anvil": "pnpm --filter @mandate/api attacks:anvil"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

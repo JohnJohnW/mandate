@@ -440,6 +440,49 @@ export function createServer(app: App): Hono {
     reply(c, { balance: await app.x402.floatBalance(), limits: app.x402.limits }),
   );
 
+  // ---- security lab
+  h.get("/attacks/catalog", async (c) => {
+    const { loadCatalog, DEFENCE_CONFIGS } = await import("@mandate/attacks");
+    return reply(c, { scenarios: loadCatalog(), configs: DEFENCE_CONFIGS });
+  });
+  h.get("/attacks/runs", (c) =>
+    reply(
+      c,
+      app.db
+        .listAttackRuns()
+        .map((r) => ({
+          id: r.id,
+          startedAt: r.started_at,
+          finishedAt: r.finished_at,
+          config: r.config,
+          planner: r.planner,
+        })),
+    ),
+  );
+  h.get("/attacks/runs/:id", (c) => {
+    const run = app.db.listAttackRuns().find((r) => r.id === c.req.param("id"));
+    if (!run) throw new HttpError(404, "not found");
+    return c.body(run.results_json, 200, { "content-type": "application/json" });
+  });
+  h.get("/attacks/latest", (c) => {
+    const run = app.db.listAttackRuns()[0];
+    return run
+      ? c.body(run.results_json, 200, { "content-type": "application/json" })
+      : reply(c, null);
+  });
+  h.post("/attacks/run", async (c) => {
+    const body = (await c.req.json().catch(() => ({}))) as {
+      configs?: ("A" | "B" | "C" | "D")[];
+      scenarioIds?: string[];
+    };
+    const { AttackRunner } = await import("./attacks/runner.js");
+    const runner = new AttackRunner(app);
+    const opts: { configs?: ("A" | "B" | "C" | "D")[]; scenarioIds?: string[] } = {};
+    if (body.configs) opts.configs = body.configs;
+    if (body.scenarioIds) opts.scenarioIds = body.scenarioIds;
+    return reply(c, await runner.run(opts));
+  });
+
   // ---- events (SSE)
   h.get("/events", (c) =>
     streamSSE(c, async (stream) => {
@@ -593,6 +636,14 @@ function openApi() {
       "/auth/passkey/assert/verify": {
         post: { summary: "Finish assertion; returns an owner session" },
       },
+      "/attacks/catalog": {
+        get: { summary: "The attack catalog and the four defence configurations" },
+      },
+      "/attacks/run": {
+        post: { summary: "Run the attack suite; configuration D uses the real pipeline and vault" },
+      },
+      "/attacks/runs": { get: { summary: "Past attack runs" } },
+      "/attacks/latest": { get: { summary: "The most recent run report" } },
       "/identity": {
         get: { summary: "Our ERC-8004 card, the oracle's card and the Know Your Agent check" },
       },
