@@ -13,3 +13,12 @@ mappings:
   incident: []
 expected_stop: [L4]
 notes: Nothing off-chain is involved. The vault reverts; the transaction hash is the evidence.
+# What a fooled planner would attempt in configurations A to C. Declared as data; the harness replays it.
+modelled_action:
+  kind: "TRANSFER_NATIVE"
+  token: "ETH"
+  amount: "0.0003"
+  target: "0xC0FFeE00000000000000000000000000000000Cc"
+  from_untrusted: false
+  guard_visible: false
+  bypass_software: true
