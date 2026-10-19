@@ -46,18 +46,45 @@ const existing = existsSync(out)
   ? (JSON.parse(readFileSync(out, "utf8")) as Record<string, unknown>)
   : undefined;
 if (existing && existing.registry === registry) {
-  console.log(`identity already registered on chain ${c.chainId}: ${JSON.stringify(existing)}`);
+  // The agents are already registered. If the vault was redeployed, the on-chain binding no longer
+  // points at the current vault, so re-bind the existing agent id (one owner-signed setAgentWallet)
+  // without re-registering or re-funding the oracle. Otherwise there is nothing to do.
+  const agent0 = existing.agent as { agentId: string; setWalletTx?: Hex };
+  const bound = (await c.publicClient.readContract({
+    address: registry,
+    abi: IDENTITY_REGISTRY_ABI,
+    functionName: "getAgentWallet",
+    args: [BigInt(agent0.agentId)],
+  })) as Address;
+  if (getAddress(bound) === getAddress(vault)) {
+    console.log(
+      `identity already registered and bound on chain ${c.chainId}: agent #${agent0.agentId} -> ${vault}`,
+    );
+    process.exit(0);
+  }
+  console.log(
+    `re-binding existing agent #${agent0.agentId} from ${bound} to the new vault ${vault}`,
+  );
+  const rebind = await bindVault(agent0.agentId);
+  agent0.setWalletTx = rebind.tx;
+  (existing.agent as Record<string, unknown>).setWalletBlock = rebind.block;
+  existing.registeredAt = new Date().toISOString();
+  writeFileSync(out, JSON.stringify(existing, null, 2) + "\n");
+  console.log(`vault re-bound as agent wallet (tx ${rebind.tx}); updated ${out}`);
   process.exit(0);
 }
 
 console.log(`chain ${c.chainId}, registry ${registry}, vault ${vault}`);
 
-// The oracle needs gas for its own registration; the owner funds it when it is empty.
+// The oracle needs gas for its own registration; the owner funds it when it is empty. On a public
+// testnet the facilitator settles x402 payments and pays that gas, so the oracle only needs enough
+// for its one register() call. The amount is overridable by env for a thin faucet balance.
+const oracleGasFloor = parseEther(anvil ? "0.1" : process.env.ORACLE_GAS_ETH || "0.00005");
 const oracleBal = await c.publicClient.getBalance({ address: oracle.address });
-if (oracleBal < parseEther("0.0005")) {
+if (oracleBal < oracleGasFloor) {
   const h = await c.ownerClient.sendTransaction({
     to: oracle.address,
-    value: parseEther(anvil ? "0.5" : "0.002"),
+    value: oracleGasFloor,
   });
   await c.publicClient.waitForTransactionReceipt({ hash: h });
   console.log(`funded oracle ${oracle.address} from the owner (${h})`);
@@ -89,6 +116,44 @@ async function register(
   throw new Error("Registered event not found");
 }
 
+/**
+ * Binds `vault` as the wallet of `agentId` with the owner's EIP-712 signature. The registry checks
+ * the signature against the vault via ERC-1271 and the vault accepts only the owner's key. Used by
+ * both the fresh registration and the redeploy re-bind path. Deadline is within 5 minutes of chain
+ * time. Declared here (hoisted) so the early re-bind branch above can call it.
+ */
+async function bindVault(agentId: string): Promise<{ tx: Hex; block: number }> {
+  const blk = await c.publicClient.getBlock();
+  const deadline = blk.timestamp + 240n;
+  const ownerSig = await c.ownerClient.signTypedData({
+    domain: {
+      name: "ERC8004IdentityRegistry",
+      version: "1",
+      chainId: c.chainId,
+      verifyingContract: registry,
+    },
+    types: {
+      AgentWalletSet: [
+        { name: "agentId", type: "uint256" },
+        { name: "newWallet", type: "address" },
+        { name: "owner", type: "address" },
+        { name: "deadline", type: "uint256" },
+      ],
+    },
+    primaryType: "AgentWalletSet",
+    message: { agentId: BigInt(agentId), newWallet: vault, owner: c.agent.address, deadline },
+  });
+  const tx = await c.agentClient.writeContract({
+    address: registry,
+    abi: IDENTITY_REGISTRY_ABI,
+    functionName: "setAgentWallet",
+    args: [BigInt(agentId), vault, deadline, ownerSig],
+  });
+  const r = await c.publicClient.waitForTransactionReceipt({ hash: tx });
+  if (r.status !== "success") throw new Error(`setAgentWallet reverted: ${tx}`);
+  return { tx, block: Number(r.blockNumber) };
+}
+
 const agentReg = await register(
   c.agentClient as typeof oracleClient,
   `${apiUrl}/.well-known/agent.json`,
@@ -97,41 +162,8 @@ console.log(`our agent registered: id ${agentReg.agentId}, tx ${agentReg.tx}`);
 const oracleReg = await register(oracleClient, `${oracleUrl}/.well-known/agent.json`);
 console.log(`oracle agent registered: id ${oracleReg.agentId}, tx ${oracleReg.tx}`);
 
-// Bind the vault as our agent's wallet. The registry checks the signature against the vault via
-// ERC-1271; the vault accepts only the owner's key. Deadline must be within 5 minutes of chain time.
-const block = await c.publicClient.getBlock();
-const deadline = block.timestamp + 240n;
-const ownerSig = await c.ownerClient.signTypedData({
-  domain: {
-    name: "ERC8004IdentityRegistry",
-    version: "1",
-    chainId: c.chainId,
-    verifyingContract: registry,
-  },
-  types: {
-    AgentWalletSet: [
-      { name: "agentId", type: "uint256" },
-      { name: "newWallet", type: "address" },
-      { name: "owner", type: "address" },
-      { name: "deadline", type: "uint256" },
-    ],
-  },
-  primaryType: "AgentWalletSet",
-  message: {
-    agentId: BigInt(agentReg.agentId),
-    newWallet: vault,
-    owner: c.agent.address,
-    deadline,
-  },
-});
-const setWalletTx = await c.agentClient.writeContract({
-  address: registry,
-  abi: IDENTITY_REGISTRY_ABI,
-  functionName: "setAgentWallet",
-  args: [BigInt(agentReg.agentId), vault, deadline, ownerSig],
-});
-const swr = await c.publicClient.waitForTransactionReceipt({ hash: setWalletTx });
-if (swr.status !== "success") throw new Error(`setAgentWallet reverted: ${setWalletTx}`);
+// Bind the vault as our agent's wallet.
+const { tx: setWalletTx, block: setWalletBlock } = await bindVault(agentReg.agentId);
 const wallet = (await c.publicClient.readContract({
   address: registry,
   abi: IDENTITY_REGISTRY_ABI,
@@ -152,7 +184,7 @@ const record = {
     registerBlock: Number(
       (await c.publicClient.getTransactionReceipt({ hash: agentReg.tx })).blockNumber,
     ),
-    setWalletBlock: Number(swr.blockNumber),
+    setWalletBlock,
   },
   oracle: {
     agentId: oracleReg.agentId,

@@ -22,7 +22,7 @@
     "format:check": "prettier --check .",
     "keys:generate": "tsx scripts/gen-keys.ts",
     "contracts:test": "pnpm --filter @mandate/contracts test",
-    "contracts:deploy": "pnpm --filter @mandate/contracts deploy",
+    "contracts:deploy": "pnpm --filter @mandate/contracts run deploy",
     "evidence:run": "pnpm --filter @mandate/contracts evidence",
     "attacks:run": "pnpm --filter @mandate/api attacks",
     "submission:build": "tsx scripts/build-submission.ts",

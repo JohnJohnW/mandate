@@ -16,12 +16,29 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 ///      DEMO_CONTACT (an allowlisted contact), VAULT_FUNDING_WEI, VAULT_USDC_FUNDING.
 ///      Caps are deliberately tiny so a faucet balance covers the whole evidence run.
 contract Deploy is Script {
-    uint128 constant ETH_PER_TX = 0.0002 ether;
-    uint128 constant ETH_WINDOW = 0.001 ether;
-    uint128 constant ETH_COSIGN = 0.005 ether;
+    // Default demo caps. Overridable by env so a chain with a thin faucet balance
+    // (for example Base Sepolia) can deploy proportionally smaller caps; the evidence
+    // amounts scale with the caps, so the vault funding scales down with them.
+    uint128 constant ETH_PER_TX_DEFAULT = 0.0002 ether;
+    uint128 constant ETH_WINDOW_DEFAULT = 0.001 ether;
+    uint128 constant ETH_COSIGN_DEFAULT = 0.005 ether;
     uint128 constant USDC_PER_TX = 1_000_000; // 1 USDC
     uint128 constant USDC_WINDOW = 5_000_000;
     uint128 constant USDC_COSIGN = 50_000_000;
+
+    /// @dev Sets the ETH asset mandate, reading the caps from env (with the defaults above). Kept in
+    ///      its own function so the main run() does not carry the extra stack slots.
+    function _setEthMandate(MandateVault vault, address agent) internal {
+        vault.setAssetMandate(
+            agent,
+            address(0),
+            uint128(vm.envOr("ETH_PER_TX_WEI", uint256(ETH_PER_TX_DEFAULT))),
+            uint128(vm.envOr("ETH_WINDOW_WEI", uint256(ETH_WINDOW_DEFAULT))),
+            uint128(vm.envOr("ETH_COSIGN_WEI", uint256(ETH_COSIGN_DEFAULT))),
+            86400,
+            true
+        );
+    }
 
     function run() external {
         uint256 ownerPk = vm.envUint("OWNER_PRIVATE_KEY");
@@ -55,7 +72,7 @@ contract Deploy is Script {
         console.log("MandateVault deployed:", address(vault));
 
         vault.setAgent(agent, uint64(block.timestamp + 7 days), true);
-        vault.setAssetMandate(agent, address(0), ETH_PER_TX, ETH_WINDOW, ETH_COSIGN, 86400, true);
+        _setEthMandate(vault, agent);
         vault.setAssetMandate(agent, usdc, USDC_PER_TX, USDC_WINDOW, USDC_COSIGN, 86400, true);
         vault.setAllowedTarget(agent, contact, true);
         vault.setAllowedTarget(agent, agent, true); // petty cash top-ups

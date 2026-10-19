@@ -55,3 +55,6 @@ submission/svg/
 submission/.*.md
 submission/.pdf.css
 submission/MANIFEST.md
+
+# foundry broadcast logs for Base Sepolia (the deployment record in deployments/ is the source of truth)
+packages/contracts/broadcast/*/84532/

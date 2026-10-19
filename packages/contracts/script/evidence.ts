@@ -76,9 +76,16 @@ const vaultRead = <T>(functionName: string, args: unknown[] = []) =>
     args,
   }) as Promise<T>;
 
+// Next nonce for an intent. Public RPC endpoints are load-balanced and a read taken right after a
+// successful execute can land on a replica that has not yet seen it, returning a stale (too low)
+// nonce that makes the next intent revert with BadNonce. We defend against that by never regressing
+// below a floor: agentSuccess advances `nonceFloor` to exactly the nonce it just consumed plus one,
+// and nextNonce returns the higher of the chain's value and that floor. The floor is derived from
+// the intents that actually succeeded, so it tracks chain precisely and can never drift ahead of it.
+let nonceFloor = 0n;
 async function nextNonce(): Promise<bigint> {
-  const [, , nonce] = await vaultRead<[boolean, bigint, bigint]>("getAgent", [c.agent.address]);
-  return nonce;
+  const [, , onchain] = await vaultRead<[boolean, bigint, bigint]>("getAgent", [c.agent.address]);
+  return onchain > nonceFloor ? onchain : nonceFloor;
 }
 
 async function mkIntent(
@@ -110,12 +117,12 @@ async function ownerTx(
   functionName: string,
   args: unknown[],
 ): Promise<{ hash: Hex; block: bigint }> {
-  const hash = await c.ownerClient.writeContract({
-    address: vault,
-    abi: MANDATE_VAULT_ABI,
-    functionName,
-    args,
-  });
+  // Explicit gas so viem skips eth_estimateGas. Estimation reads the latest state, and a lagging
+  // replica can still see the state from before the previous owner tx (for example reporting the
+  // vault as unpaused right after a pause), which makes a perfectly valid call look like it would
+  // revert. Sending directly against the real chain state avoids that; the receipt still proves it.
+  const data = encodeFunctionData({ abi: MANDATE_VAULT_ABI, functionName, args });
+  const hash = await c.ownerClient.sendTransaction({ to: vault, data, gas: 200_000n });
   const r = await c.publicClient.waitForTransactionReceipt({ hash });
   if (r.status !== "success") throw new Error(`owner tx ${functionName} reverted: ${hash}`);
   return { hash, block: r.blockNumber };
@@ -126,23 +133,70 @@ async function agentSuccess(
   functionName: string,
   args: unknown[],
 ): Promise<{ hash: Hex; block: bigint }> {
-  const hash = await c.agentClient.writeContract({
-    address: vault,
-    abi: MANDATE_VAULT_ABI,
-    functionName,
-    args,
-  });
+  // Encode and send with explicit gas so viem skips eth_estimateGas, whose read can land on a
+  // lagging RPC replica and revert on stale nonce or window state even when the transaction is
+  // valid. The receipt below still proves it actually succeeded on-chain.
+  const data = encodeFunctionData({ abi: MANDATE_VAULT_ABI, functionName, args });
+  const hash = await c.agentClient.sendTransaction({ to: vault, data, gas: 400_000n });
   const r = await c.publicClient.waitForTransactionReceipt({ hash });
   if (r.status !== "success")
     throw new Error(`expected success for ${functionName}, got revert ${hash}`);
+  // The first arg of execute / executeWithApproval is the intent; a successful call consumed exactly
+  // its nonce, so the next intent must use at least that nonce + 1 even if a lagging read says less.
+  const used = (args[0] as { nonce: bigint }).nonce;
+  if (used + 1n > nonceFloor) nonceFloor = used + 1n;
   return { hash, block: r.blockNumber };
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 /**
- * Sends an agent transaction that is expected to revert ON-CHAIN, so the revert
- * itself becomes evidence. Gas is set explicitly to skip estimation (which would
- * fail locally and never produce a hash). The reason is recovered by replaying
- * the call against the state just before the block.
+ * Decodes why a call reverts by simulating it against the latest state. Public RPC replicas lag
+ * behind the block we just confirmed, so a simulation can briefly see a stale nonce and report a
+ * BadNonce that never happens on-chain (our nonce comes from a floor that is always valid), or can
+ * even not revert yet. We retry through those transient states until the real guard surfaces.
+ */
+async function revertReason(functionName: string, args: unknown[]): Promise<string> {
+  for (let attempt = 0; attempt < 8; attempt++) {
+    try {
+      await c.publicClient.simulateContract({
+        address: vault,
+        abi: MANDATE_VAULT_ABI,
+        functionName,
+        args,
+        account: c.agent.address,
+      });
+      // It did not revert against this (possibly lagging) state; give the replica a moment.
+      await sleep(1000);
+    } catch (err) {
+      if (err instanceof BaseError) {
+        const revert = err.walk(
+          (e) => e instanceof ContractFunctionRevertedError,
+        ) as ContractFunctionRevertedError | null;
+        if (revert?.data) {
+          const name = revert.data.errorName;
+          // BadNonce here is a replica-lag artifact, not the guard we are demonstrating; wait it out.
+          if (name === "BadNonce" && attempt < 7) {
+            await sleep(1000);
+            continue;
+          }
+          const argsText = revert.data.args?.length
+            ? `(${revert.data.args.map(String).join(", ")})`
+            : "()";
+          return `${name}${argsText}`;
+        }
+        if (revert) return revert.shortMessage;
+      }
+      await sleep(1000);
+    }
+  }
+  return "reverted (reason not decoded)";
+}
+
+/**
+ * Sends an agent transaction that is expected to revert ON-CHAIN, so the revert itself becomes
+ * evidence. Gas is set explicitly to skip estimation (which would fail and never produce a hash).
+ * The reason is recovered by revertReason, which tolerates replica lag.
  */
 async function agentRevert(
   functionName: string,
@@ -153,31 +207,7 @@ async function agentRevert(
   const r = await c.publicClient.waitForTransactionReceipt({ hash });
   if (r.status !== "reverted")
     throw new Error(`expected revert for ${functionName}, but it succeeded: ${hash}`);
-  let reason = "reverted (reason not decoded)";
-  try {
-    await c.publicClient.simulateContract({
-      address: vault,
-      abi: MANDATE_VAULT_ABI,
-      functionName,
-      args,
-      account: c.agent.address,
-      blockNumber: r.blockNumber - 1n,
-    });
-  } catch (err) {
-    if (err instanceof BaseError) {
-      const revert = err.walk(
-        (e) => e instanceof ContractFunctionRevertedError,
-      ) as ContractFunctionRevertedError | null;
-      if (revert?.data) {
-        const argsText = revert.data.args?.length
-          ? `(${revert.data.args.map(String).join(", ")})`
-          : "()";
-        reason = `${revert.data.errorName}${argsText}`;
-      } else if (revert) {
-        reason = revert.shortMessage;
-      }
-    }
-  }
+  const reason = await revertReason(functionName, args);
   return { hash, block: r.blockNumber, reason };
 }
 
@@ -552,6 +582,11 @@ const small = perTx / 2n;
   const hashes: Hex[] = [];
   const blocks: bigint[] = [];
   let last = "";
+  let successes = 0;
+  // Keep sending the same sub-cap transfer. The vault lets them through until the window is full and
+  // then reverts, and that revert is the evidence. We deliberately do NOT read spentInWindow to
+  // decide when to stop: that read lags on a public RPC and would make us send one transfer too many
+  // (hitting the cap on a call we expected to succeed). We just observe the actual outcome instead.
   for (let k = 0; k < 12; k++) {
     const i = await mkIntent(
       "TRANSFER_NATIVE",
@@ -561,23 +596,21 @@ const small = perTx / 2n;
       `Window exhaustion step ${k + 1}`,
     );
     const sig = await signIntent(i);
-    const m = await vaultRead<typeof ethMandate>("getAssetMandate", [
-      c.agent.address,
-      ZERO_ADDRESS,
-    ]);
-    const block = await c.publicClient.getBlock();
-    const rolled =
-      block.timestamp >= m.windowStart + BigInt(m.windowSeconds) ? 0n : m.spentInWindow;
-    if (rolled + perTx > m.autonomousWindowCap) {
-      const t = await agentRevert("execute", [i, "0x", sig]);
-      hashes.push(t.hash);
-      blocks.push(t.block);
-      last = t.reason;
+    const data = encodeFunctionData({
+      abi: MANDATE_VAULT_ABI,
+      functionName: "execute",
+      args: [i, "0x", sig],
+    });
+    const hash = await c.agentClient.sendTransaction({ to: vault, data, gas: 400_000n });
+    const r = await c.publicClient.waitForTransactionReceipt({ hash });
+    hashes.push(hash);
+    blocks.push(r.blockNumber);
+    if (r.status === "reverted") {
+      last = await revertReason("execute", [i, "0x", sig]);
       break;
     }
-    const t = await agentSuccess("execute", [i, "0x", sig]);
-    hashes.push(t.hash);
-    blocks.push(t.block);
+    successes++;
+    if (i.nonce + 1n > nonceFloor) nonceFloor = i.nonce + 1n; // a success consumed this nonce
   }
   push({
     step: "11",
@@ -587,7 +620,7 @@ const small = perTx / 2n;
     blocks,
     status: last ? "reverted" : "success",
     outcome: last
-      ? `${hashes.length - 1} succeeded, then ${last}`
+      ? `${successes} succeeded, then ${last}`
       : "window not exhausted within 12 transfers",
     proves:
       "The daily window is a blast-radius bound: many small transfers cannot add up to more than the owner allowed.",

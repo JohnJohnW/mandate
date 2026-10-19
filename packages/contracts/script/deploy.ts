@@ -28,7 +28,14 @@ if (!anvil) {
 } else {
   scriptEnv.VAULT_FUNDING_WEI = String(10n ** 18n);
 }
-for (const k of ["DEMO_CONTACT", "VAULT_FUNDING_WEI", "VAULT_USDC_FUNDING"]) {
+for (const k of [
+  "DEMO_CONTACT",
+  "VAULT_FUNDING_WEI",
+  "VAULT_USDC_FUNDING",
+  "ETH_PER_TX_WEI",
+  "ETH_WINDOW_WEI",
+  "ETH_COSIGN_WEI",
+]) {
   if (c.env.get(k)) scriptEnv[k] = c.env.get(k);
 }
 
