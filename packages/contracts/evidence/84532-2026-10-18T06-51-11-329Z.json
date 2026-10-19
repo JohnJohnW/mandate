@@ -1,0 +1,248 @@
+{
+  "chainId": 84532,
+  "vault": "0xf0355Cf4f96142CAaA4cbE354762F3E10abBAd2A",
+  "owner": "0x53d37b71366BEdd941382a9EBb77BCB74dbC76Fb",
+  "agent": "0x87F89a384B6571990254006C78397ADc0e04553C",
+  "runAt": "2026-10-18T06:51:11.329Z",
+  "commit": "baedb86",
+  "rows": [
+    {
+      "step": "1",
+      "title": "Vault deployment",
+      "fn": "constructor(owner)",
+      "txHashes": [
+        "0xfcc455d44d6c0fd94ef9df23b9d8cbce85bda073b8c760cc3cde7f8d3dc6e99e"
+      ],
+      "blocks": [
+        "48268956"
+      ],
+      "status": "success",
+      "outcome": "MandateVault at 0xf0355Cf4f96142CAaA4cbE354762F3E10abBAd2A",
+      "proves": "The enforcement contract exists on-chain with the owner as Ownable2Step owner. Source verification status is recorded in the runbook."
+    },
+    {
+      "step": "2",
+      "title": "Owner sets agent, asset mandates, allowlists",
+      "fn": "setAgent, setAssetMandate, setAssetMandate, setAllowedTarget, setAllowedTarget, setAllowedSelector",
+      "txHashes": [
+        "0xf4564351c5ae2f787ca4ec11d00121aaefa1a908ed69a84b880a39dd08d5a13e",
+        "0xca8e802725fd2293ce38c8e627194b763249c59cc29f92efcbc80125b9b2be78",
+        "0x05b001e9a7c0bddda0a5b323b59014202cdda93f529773486c07d95770afe328",
+        "0x9f05aff67dbd090c9e21710996915368314c1d81e342aea4168d558b6de02010",
+        "0xeaa89c8744843664ebaa2f40213e1e7af017a5887815d603e5f4ba8bfa5832f2",
+        "0x06dc52ae070cd0acd0dc191d4f3b3a697dc553fc30fed8fd0d9616a4a7768dc9"
+      ],
+      "blocks": [
+        "48268957",
+        "48268958",
+        "48268959",
+        "48268960",
+        "48268961",
+        "48268962"
+      ],
+      "status": "success",
+      "outcome": "6 owner transactions",
+      "proves": "The mandate (expiry, per-asset caps, allowlisted targets and selectors) is on-chain state set only by the owner."
+    },
+    {
+      "step": "3",
+      "title": "ERC-8004 registration of both agents and setAgentWallet to the vault",
+      "fn": "register(agentURI) x2, setAgentWallet(agentId, vault, deadline, ownerSig)",
+      "txHashes": [
+        "0x4e4869dc982307e05b99db670bd6f03c7d1e8b0866d187301b5e0258856f0638",
+        "0xa25f9957e94287bd3d83638a75c27b02ff57df75d424b4789a78c45d964ad7d3",
+        "0x2814bdec7dbad988338f5f9a1e150174542f9a12677cf630029448e8c50d369d"
+      ],
+      "blocks": [
+        "48267228",
+        "48267229",
+        "48268970"
+      ],
+      "status": "success",
+      "outcome": "our agent #10052, oracle agent #10053 in registry 0x8004A818BFB912233c491871b3d84c89A494BD9e; vault bound as agent wallet",
+      "proves": "Both agents carry a portable on-chain identity. The vault is the registered wallet of our agent, bound with the owner's ERC-1271 signature; the agent key alone cannot make that binding."
+    },
+    {
+      "step": "4",
+      "title": "Tier 1 autonomous ETH transfer to an allowlisted contact",
+      "fn": "execute",
+      "txHashes": [
+        "0xf5afab4c6f927921e6e0a203f8d7d0c1e174a5269d718d208bad56733801f43b"
+      ],
+      "blocks": [
+        "48268978"
+      ],
+      "status": "success",
+      "outcome": "0.000000625 ETH to 0x1234567890AbcdEF1234567890aBcdef12345678",
+      "proves": "Inside the mandate the agent transacts alone: active agent, allowlisted target, within per-tx and window caps, nonce consumed."
+    },
+    {
+      "step": "5",
+      "title": "Tier 1 WETH wrap through an allowlisted contract call",
+      "fn": "execute (CALL deposit())",
+      "txHashes": [
+        "0x12c0f63b4e602085222da52fad2f0201077278a9ec944258ca29c35f5be7bee7"
+      ],
+      "blocks": [
+        "48268979"
+      ],
+      "status": "success",
+      "outcome": "0.000000625 ETH wrapped at 0x4200000000000000000000000000000000000006",
+      "proves": "Contract calls are restricted to allowlisted (target, selector) pairs and the calldata hash is bound into the signed intent."
+    },
+    {
+      "step": "6a",
+      "title": "Petty cash top-up from the vault to the agent EOA",
+      "fn": "execute (TOPUP_PETTY_CASH)",
+      "txHashes": [
+        "0x987384f3b95ccea1268053871a0d6da15177ed7e7979d563a78642e9e78473db"
+      ],
+      "blocks": [
+        "48268979"
+      ],
+      "status": "success",
+      "outcome": "0.5 USDC to the agent",
+      "proves": "The imprest float: a small, capped USDC balance the agent can spend on x402 invoices, replenished only from the vault and only to itself."
+    },
+    {
+      "step": "6b",
+      "title": "x402 USDC payment to the oracle agent from petty cash",
+      "fn": "USDC.transferWithAuthorization via the facilitator",
+      "txHashes": [
+        "0x413d9c4cdae4c19b990056cb94ed7c34a404e67acfed9175f1b3d8e2284654fb"
+      ],
+      "blocks": [
+        "48268980"
+      ],
+      "status": "success",
+      "outcome": "0.001 USDC paid by 0x87F89a384B6571990254006C78397ADc0e04553C; HTTP 200",
+      "proves": "An agent paying another agent per request: the EIP-3009 authorization is signed by the agent's petty cash account and settled on-chain by the facilitator. The vault is never involved in the payment itself."
+    },
+    {
+      "step": "7",
+      "title": "Over-cap attempt by the agent key, directly against the vault",
+      "fn": "execute",
+      "txHashes": [
+        "0x23635b93c49caab43b25aea00df8d1ce51572cad3ff8fc70f56469712970cc07"
+      ],
+      "blocks": [
+        "48268981"
+      ],
+      "status": "reverted",
+      "outcome": "AbovePerTxCap(1250000000001, 1250000000000)",
+      "proves": "The per-transaction cap is enforced by the chain, not by the agent software. A compromised agent key cannot exceed it."
+    },
+    {
+      "step": "8",
+      "title": "Transfer to a non-allowlisted target",
+      "fn": "execute",
+      "txHashes": [
+        "0xcaa3573f04721b31b38d7b40446a1996441fc9113ba92edca6be7bcdbf95de9a"
+      ],
+      "blocks": [
+        "48268982"
+      ],
+      "status": "reverted",
+      "outcome": "TargetNotAllowed(0xC0FFeE00000000000000000000000000000000Cc)",
+      "proves": "Counterparties outside the allowlist need an owner co-signature; without one the chain reverts."
+    },
+    {
+      "step": "9",
+      "title": "Tier 2 co-signed transfer: owner EIP-712 approval verified on-chain",
+      "fn": "executeWithApproval",
+      "txHashes": [
+        "0x338ac53d465ac128806215e0d8395e849b746d4c329338789bfee2492ecc5738"
+      ],
+      "blocks": [
+        "48268987"
+      ],
+      "status": "success",
+      "outcome": "0.0000075 ETH to 0xC0FFeE00000000000000000000000000000000Cc with owner approval 0x65e2ad15...",
+      "proves": "Above the autonomous caps or outside the allowlist, the contract itself checks the owner's signature over this exact intent hash and deadline."
+    },
+    {
+      "step": "10",
+      "title": "Replay of the same owner approval on a new intent",
+      "fn": "executeWithApproval",
+      "txHashes": [
+        "0x938f81eb705aea03a09394d0b1b0499195d572444c050fac925d14a10aab3dee"
+      ],
+      "blocks": [
+        "48268987"
+      ],
+      "status": "reverted",
+      "outcome": "BadOwnerSignature()",
+      "proves": "An approval is bound to one intent hash; the nonce makes every intent hash unique, so a captured approval cannot be reused."
+    },
+    {
+      "step": "11",
+      "title": "Window cap exhaustion through repeated sub-cap transfers",
+      "fn": "execute x5",
+      "txHashes": [
+        "0xa20aa643b44a278c2fe390dd0b6cd844bff1ca65c63d2d7c527f6e98006cd3bb",
+        "0x0478088183be1cfcf41a4e24e0c9e9515a6c7601b90a2fc5012d0205f8d24ec0",
+        "0x777f2b7687e989b59f0006e2ff2f5c1a87ccd9683dd36d4fa42f45ebe9af373f",
+        "0x79c253a08a1e510f3623eb83892f2b3a4ed8410118933ad6f526660590e9ba93",
+        "0xa9195c3c702b3e24dfd9c6333477c218f05da1a6dc001e5674d26c73936170cf"
+      ],
+      "blocks": [
+        "48268983",
+        "48268983",
+        "48268984",
+        "48268985",
+        "48268985"
+      ],
+      "status": "reverted",
+      "outcome": "4 succeeded, then AboveWindowCap(6250000000000, 1250000000000, 6250000000000)",
+      "proves": "The daily window is a blast-radius bound: many small transfers cannot add up to more than the owner allowed."
+    },
+    {
+      "step": "12",
+      "title": "Kill switch: revokeAgent then any agent call reverts; pause likewise",
+      "fn": "revokeAgent, execute, setAgent, pause, execute, unpause",
+      "txHashes": [
+        "0xaf35bdf2ce4bcc289c514b3e02d9f3a7b9548a4b283776fd57c5d37f43f67a7d",
+        "0xfff0b2243936dfc8a73e659ed1729ded7d0e1cdefc06f8dc7a87f7b1eabffc9c",
+        "0xe6a9a92f00b533abae44be537e4054cb37aa1069681f68c16aee24e6eb2a0f75",
+        "0x0d2f251d36731388b6467994a836325d4afbc0fd1a01e14f8dd26b972d842a57",
+        "0xa32c3e1b5c47a2484950f3c8c2a1cd0ddee8b1c6378f8284ae6ddf871e17077c",
+        "0x0f9cfb5802d6bc6cf9ab5536703a954c2ee92c5c2bf88ef0a6636ef16736dfe4"
+      ],
+      "blocks": [
+        "48268989",
+        "48268990",
+        "48268991",
+        "48268991",
+        "48268992",
+        "48268992"
+      ],
+      "status": "reverted",
+      "outcome": "after revoke: AgentNotActive(); after pause: EnforcedPause()",
+      "proves": "One owner transaction ends the agent's authority. In-flight and future agent transactions revert on-chain."
+    },
+    {
+      "step": "13",
+      "title": "EIP-7702 delegation and one execution through MandateAccount7702",
+      "fn": "type-4 transaction",
+      "txHashes": [],
+      "blocks": [],
+      "status": "pending",
+      "outcome": "P2 stretch goal not reached",
+      "proves": ""
+    },
+    {
+      "step": "T3",
+      "title": "Tier 3: unlimited token approval, even with an owner approval",
+      "fn": "executeWithApproval (APPROVE_ERC20 max)",
+      "txHashes": [
+        "0x1962f5dff0dee7d7848c5a87fd46d4c3a03f101384d23f4138d3ba5de88b500a"
+      ],
+      "blocks": [
+        "48268989"
+      ],
+      "status": "reverted",
+      "outcome": "UnlimitedApproval()",
+      "proves": "Some actions have no code path at all. No signature lifts a Tier 3 restriction."
+    }
+  ]
+}

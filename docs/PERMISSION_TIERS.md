@@ -30,6 +30,8 @@ These are the values the deploy script sets (`packages/contracts/script/Deploy.s
 | ETH | 0.0002 | 0.001 | 0.005 | 24 hours |
 | USDC | 1.0 | 5.0 | 50.0 | 24 hours |
 
+These are the defaults on Anvil. The public Base Sepolia evidence run scales the ETH caps down by a fixed factor (set through `ETH_PER_TX_WEI` / `ETH_WINDOW_WEI` / `ETH_COSIGN_WEI`) so that a thin Coinbase faucet balance covers the whole run; the evidence amounts scale with the caps, so the ratios and every enforcement check are identical. The actual on-chain caps for a run are printed in the mandate table at the top of `docs/EXECUTION_EVIDENCE.md`, read back from the deployed vault. USDC caps are unchanged.
+
 Allowlisted targets: the demo contact (a fixed address), and the agent's own address (for petty cash top-ups). Allowlisted contract calls: `deposit()` on WETH. The agent expiry is seven days from deployment. Caps are per asset in base units, not in a fiat unit of account; see ADR-003 for why.
 
 The owner changes any of these from the dashboard's Mandate page, and each change is an owner transaction to the vault. The agent cannot call any of the setters.

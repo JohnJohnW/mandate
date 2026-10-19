@@ -1,0 +1,21 @@
+{
+  "chainId": 84532,
+  "registry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+  "agent": {
+    "agentId": "10052",
+    "owner": "0x87F89a384B6571990254006C78397ADc0e04553C",
+    "agentURI": "http://localhost:4010/.well-known/agent.json",
+    "registerTx": "0x4e4869dc982307e05b99db670bd6f03c7d1e8b0866d187301b5e0258856f0638",
+    "setWalletTx": "0x2814bdec7dbad988338f5f9a1e150174542f9a12677cf630029448e8c50d369d",
+    "registerBlock": 48267228,
+    "setWalletBlock": 48268970
+  },
+  "oracle": {
+    "agentId": "10053",
+    "owner": "0x7e955b45Ea32dBDE3423CD9A22E387442f2e429c",
+    "agentURI": "http://localhost:4020/.well-known/agent.json",
+    "registerTx": "0xa25f9957e94287bd3d83638a75c27b02ff57df75d424b4789a78c45d964ad7d3",
+    "registerBlock": 48267229
+  },
+  "registeredAt": "2026-10-18T06:50:27.387Z"
+}
