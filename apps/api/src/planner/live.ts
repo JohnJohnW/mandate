@@ -47,14 +47,15 @@ export class LivePlanner implements Planner {
       `Tools: ${JSON.stringify(input.tools)}`,
     ].join("\n\n");
     const model = this.provider.chatModel(this.cfg.llm.model);
-    // Primary path: structured output via the provider's JSON mode.
+    // Primary path: structured output via the provider's JSON mode. Temperature is intentionally
+    // omitted: some OpenAI-compatible endpoints reject it as deprecated, and the plan schema
+    // validates the output regardless, so we rely on the model's default sampling.
     try {
       const { object } = await generateObject({
         model,
         schema: planSchema,
         system: SYSTEM,
         prompt,
-        temperature: 0,
       });
       return planSchema.parse(object);
     } catch (objErr) {
@@ -65,16 +66,18 @@ export class LivePlanner implements Planner {
         const { text } = await generateText({
           model,
           system: `${SYSTEM}
-Return ONLY a single JSON object and nothing else: no prose, no code fence.`,
+Return ONLY one JSON object and nothing else: no prose, no code fence. It must have exactly this shape:
+{"summary": string, "steps": [{"id": string, "tool": string, "args": object, "why": string}], "reply": string}
+Every step needs a short unique "id" and a "tool" taken from the tool list. "args" maps argument names to string, number or boolean values, or to {"ref": id, "field": name} for quarantined content. Use an empty "steps" array when no tool is needed. "summary" and "reply" are always present.`,
           prompt,
-          temperature: 0,
         });
         const parsed = extractJson(text);
         if (parsed !== undefined) return planSchema.parse(parsed);
         return {
           summary: "planner error",
           steps: [],
-          reply: "I could not produce a valid plan (the model returned no JSON object). Nothing was executed.",
+          reply:
+            "I could not produce a valid plan (the model returned no JSON object). Nothing was executed.",
         };
       } catch (txtErr) {
         const detail = txtErr instanceof Error ? txtErr.message : String(txtErr);
